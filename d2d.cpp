@@ -38,14 +38,14 @@ bool d2d::d2dinit(HWND h) {
 		return false;
 	}
 	hr = g_target->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Blue), &brushes[1]
+		D2D1::ColorF(D2D1::ColorF::Green), &brushes[1]
 	);
 	if (FAILED(hr)) {
 		MessageBox(NULL, TEXT("ブラシ初期化失敗"), TEXT("ERROR"), MB_OK);
 		return false;
 	}
 	hr = g_target->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Green), &brushes[2]
+		D2D1::ColorF(D2D1::ColorF::Blue), &brushes[2]
 	);
 	if (FAILED(hr)) {
 		MessageBox(NULL, TEXT("ブラシ初期化失敗"), TEXT("ERROR"), MB_OK);

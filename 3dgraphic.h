@@ -7,8 +7,9 @@
 #include "vector.h"
 
 namespace graphic {
-	vector convert(vector, vector, vector, vector, vector);
-	void draw(vector, vector, vector, vector);
+	vector convert(vector, vector, float,float);
+	void draw(vector,float,float);
+	bool isinScreen(vector);   //•`‰æ”ÍˆÍ“à‚É‚ ‚é‚©”»’è
 }
 
 #endif

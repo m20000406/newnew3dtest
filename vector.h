@@ -26,6 +26,5 @@ vector operator/(vector, float);   //vectorの加減乗除
 float operator*(vector, vector);   //vectorとvectorの内積
 vector normalize(vector);   //ベクトルの正規化
 vector convert(vector);   //三次元ベクトルを描画平面に変換(z == -1 -> 描画範囲外)
-const float alpha = 5;   //描画平面がどのくらい先か
 
 #endif
