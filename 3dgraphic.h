@@ -7,9 +7,12 @@
 #include "vector.h"
 
 namespace graphic {
-	vector convert(vector, vector, float,float);
-	void draw(vector,float,float);
+	vector convert(vector);
+	void draw();
 	bool isinScreen(vector);   //•`‰æ”ÍˆÍ“à‚É‚ ‚é‚©”»’è
+	void turnRight(float);   //‚±‚ÌŠp“x‚¾‚¯‰E‚É‰ñ“]
+	void turnDown(float);   //‚±‚ÌŠp“x‚¾‚¯‰º‚É‰ñ“]
+	void moveCamera(vector);   //‚±‚Ìvector‚¾‚¯ˆÚ“®
 }
 
 #endif

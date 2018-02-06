@@ -6,18 +6,20 @@
 #include "d2d.h"
 #include <math.h>
 
-const float g_near = 10;
-const float g_far = 20;   //近・遠平面
-//点の位置vec、カメラの位置pos、右回転角度t、した回転角度p
-vector graphic::convert(vector vec,vector pos,float t,float p) {
-	//カメラを原点に平行移動
-	vector v = vec -pos;
-	//x軸にp回転
-	v = vector(v.x,v.y*cos(p)-v.z*sin(p),v.y*sin(p)+v.z*cos(p));
-	//z軸に-t回転
-	v = vector(v.x*cos(t)-v.z*sin(t),v.y,v.x*sin(t)+v.z*cos(t));
-	if (v.z == 0)return vector::zero+vector(300,450,0);
-	else return vector(g_near*v.x / v.z, g_near*v.y / v.z, v.z) + vector(300, 450, 0);
+const float g_near = 0.1;
+const float g_far = 40;   //近・遠平面
+vector g_pos(0,0,-10);
+vector g_eye(0,0,1);
+vector g_right(1,0,0);
+vector g_down(0,1,0);
+//点の位置v
+vector graphic::convert(vector v) {
+	vector vec = v - g_pos;
+	float k = vec*g_eye;
+	if (k != 0)vec = g_near / k*vec;
+	float x = vec*g_right;
+	float y = vec*g_down;
+	return vector(10*x,10*y,k)+vector(300,450,0);
 }
 
 bool graphic::isinScreen(vector v) {
@@ -26,22 +28,38 @@ bool graphic::isinScreen(vector v) {
 	return true;
 }
 
-void graphic::draw(vector pos,float t,float p) {
+void graphic::turnRight(float t){
+	vector old = g_eye;
+	g_eye = old*cos(t) + g_right*sin(t);
+	g_right = -1*old*sin(t) + g_right*cos(t);
+}
+
+void graphic::turnDown(float t){
+	vector old = g_eye;
+	g_eye = old*cos(t) + g_down*cos(t);
+	g_down = -1 * old*sin(t) + g_down*cos(t);
+}
+
+void graphic::draw() {
 	static int r = 20;
 	d2d::getTarget()->Clear(D2D1::ColorF(D2D1::ColorF::White));
-	vector o = graphic::convert(vector(0, 0, 0),pos, t,p);
+	vector o = graphic::convert(vector(0, 0, 0));
 	if (!graphic::isinScreen(o)) {
 		OutputDebugString(TEXT("O is not in screen\n"));
 		return;
 	}
-	vector m = graphic::convert(vector(r, 0, 0), pos, t,p);
+	vector m = graphic::convert(vector(r, 0, 0));
 	if(graphic::isinScreen(m))d2d::drawLine(o, m, 0);
 	else OutputDebugString(TEXT("(5,0,0) is not in screen\n"));
-	m = graphic::convert(vector(0, r, 0), pos,t, p);
+	m = graphic::convert(vector(0, r, 0));
 	if (graphic::isinScreen(m))d2d::drawLine(o, m, 1);
 	else OutputDebugString(TEXT("(0,5,0) is not in screen\n"));
-	m = graphic::convert(vector(0, 0, r), pos,t, p);
+	m = graphic::convert(vector(0, 0, r));
 	if (graphic::isinScreen(m))d2d::drawLine(o, m, 2);
 	else OutputDebugString(TEXT("(0,0,5) is not in screen\n"));
 	OutputDebugString("####################\n");
+}
+
+void graphic::moveCamera(vector v) {
+	g_pos =g_pos + v;
 }

@@ -11,8 +11,6 @@
 
 void callback();   //30fpsで呼び出される関数
 HWND g_hwnd;   //ウィンドウハンドル
-vector g_pos(0, 0, -10);
-float theta, phi;
 
 int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, int nCmdShow) {
 	MSG msg;
@@ -175,21 +173,21 @@ BOOL InitInstance(HINSTANCE hInst, int nCmdShow) {
 }
 
 void move() {
-	if (keyboard::getInstance()->is(g_keycodeA))g_pos = g_pos - vector(g_velocity, 0, 0);
-	if (keyboard::getInstance()->is(g_keycodeD))g_pos = g_pos + vector(g_velocity, 0, 0);
-	if (keyboard::getInstance()->is(g_keycodeSpace))g_pos = g_pos + vector(0, g_velocity, 0);
-	if (keyboard::getInstance()->is(g_keycodeShift))g_pos = g_pos - vector(0, g_velocity, 0);
-	if (keyboard::getInstance()->is(g_keycodeS))g_pos = g_pos + vector(0, 0, g_velocity);
-	if (keyboard::getInstance()->is(g_keycodeW))g_pos = g_pos - vector(0, 0, g_velocity);
-	if (keyboard::getInstance()->is(g_keycodeUp))phi -= g_vdeg;
-	if (keyboard::getInstance()->is(g_keycodeDown))phi += g_vdeg;
-	if (keyboard::getInstance()->is(g_keycodeRight))theta += g_vdeg;
-	if (keyboard::getInstance()->is(g_keycodeLeft))theta -= g_vdeg;
+	if (keyboard::getInstance()->is(g_keycodeA))graphic::moveCamera(vector(-g_velocity, 0, 0));
+	if (keyboard::getInstance()->is(g_keycodeD))graphic::moveCamera(vector(g_velocity, 0, 0));
+	if (keyboard::getInstance()->is(g_keycodeSpace))graphic::moveCamera(vector(0, -g_velocity, 0));
+	if (keyboard::getInstance()->is(g_keycodeShift))graphic::moveCamera(vector(0, g_velocity, 0));
+	if (keyboard::getInstance()->is(g_keycodeS))graphic::moveCamera(vector(0, 0, g_velocity));
+	if (keyboard::getInstance()->is(g_keycodeW))graphic::moveCamera(vector(0, 0, -g_velocity));
+	if (keyboard::getInstance()->is(g_keycodeUp))graphic::turnDown(-g_vdeg);
+	if (keyboard::getInstance()->is(g_keycodeDown))graphic::turnDown(g_vdeg);
+	if (keyboard::getInstance()->is(g_keycodeRight))graphic::turnRight(g_vdeg);
+	if (keyboard::getInstance()->is(g_keycodeLeft))graphic::turnRight(-g_vdeg);
 }
 
 void callback() {
 	move();
 	d2d::beginpaint();
-	graphic::draw(g_pos,theta,phi);
+	graphic::draw();
 	d2d::endpaint();
 }
