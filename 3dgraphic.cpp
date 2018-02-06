@@ -6,20 +6,22 @@
 #include "d2d.h"
 #include <math.h>
 
-const float g_near = 0.1;
-const float g_far = 40;   //近・遠平面
+const float g_near = 1;
+const float g_far = 100;   //近・遠平面
 vector g_pos(0,0,-10);
 vector g_eye(0,0,1);
 vector g_right(1,0,0);
 vector g_down(0,1,0);
+float PI = 3.141592;
+float theta = PI / 3;   //視野角
 //点の位置v
 vector graphic::convert(vector v) {
 	vector vec = v - g_pos;
 	float k = vec*g_eye;
 	if (k != 0)vec = g_near / k*vec;
-	float x = vec*g_right;
-	float y = vec*g_down;
-	return vector(10*x,10*y,k)+vector(300,450,0);
+	float x = vec*g_right*300/(2*g_near*tan(theta));
+	float y = vec*g_down*300/(2*g_near*tan(theta));
+	return vector(x,y,k)+vector(300,450,0);
 }
 
 bool graphic::isinScreen(vector v) {
@@ -36,12 +38,12 @@ void graphic::turnRight(float t){
 
 void graphic::turnDown(float t){
 	vector old = g_eye;
-	g_eye = old*cos(t) + g_down*cos(t);
+	g_eye = old*cos(t) + g_down*sin(t);
 	g_down = -1 * old*sin(t) + g_down*cos(t);
 }
 
 void graphic::draw() {
-	static int r = 20;
+	static int r = 5;
 	d2d::getTarget()->Clear(D2D1::ColorF(D2D1::ColorF::White));
 	vector o = graphic::convert(vector(0, 0, 0));
 	if (!graphic::isinScreen(o)) {

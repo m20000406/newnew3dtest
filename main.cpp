@@ -175,8 +175,8 @@ BOOL InitInstance(HINSTANCE hInst, int nCmdShow) {
 void move() {
 	if (keyboard::getInstance()->is(g_keycodeA))graphic::moveCamera(vector(-g_velocity, 0, 0));
 	if (keyboard::getInstance()->is(g_keycodeD))graphic::moveCamera(vector(g_velocity, 0, 0));
-	if (keyboard::getInstance()->is(g_keycodeSpace))graphic::moveCamera(vector(0, -g_velocity, 0));
-	if (keyboard::getInstance()->is(g_keycodeShift))graphic::moveCamera(vector(0, g_velocity, 0));
+	if (keyboard::getInstance()->is(g_keycodeSpace))graphic::moveCamera(vector(0, g_velocity, 0));
+	if (keyboard::getInstance()->is(g_keycodeShift))graphic::moveCamera(vector(0, -g_velocity, 0));
 	if (keyboard::getInstance()->is(g_keycodeS))graphic::moveCamera(vector(0, 0, g_velocity));
 	if (keyboard::getInstance()->is(g_keycodeW))graphic::moveCamera(vector(0, 0, -g_velocity));
 	if (keyboard::getInstance()->is(g_keycodeUp))graphic::turnDown(-g_vdeg);

@@ -20,12 +20,12 @@ BOOL InitInstance(HINSTANCE, int);
 //幅、高さ
 const int WIDTH = 600;
 const int HEIGHT = 900;
+const float PI = 3.141592;
+const float g_vdeg = PI / 6;
 //移動
 void move();
 //移動距離
-const float PI = 3.141592;
 const float g_velocity = 0.25;
-const float g_vdeg = PI / 240;
 //キーコード
 const int g_keycodeA = 65;
 const int g_keycodeD = 68;
