@@ -21,7 +21,7 @@ BOOL InitInstance(HINSTANCE, int);
 const int WIDTH = 600;
 const int HEIGHT = 900;
 const float PI = 3.141592;
-const float g_vdeg = PI / 6;
+const float g_vdeg = PI / 240;
 //ˆÚ“®
 void move();
 //ˆÚ“®‹——£

@@ -11,7 +11,7 @@ namespace d2d {
 	ID2D1Factory* g_factory = NULL;   //ファクトリの初期化
 	ID2D1HwndRenderTarget* g_target = NULL;   //レンダーターゲットの初期化
 	HWND hwnd;   //ウィンドウハンドル保持(これいいのか?)
-	ID2D1SolidColorBrush* brushes[3];
+	ID2D1SolidColorBrush* solidBrush;
 }
 
 bool d2d::d2dinit(HWND h) {
@@ -31,21 +31,7 @@ bool d2d::d2dinit(HWND h) {
 		return false;
 	}
 	hr = g_target->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Red), &brushes[0]
-	);
-	if (FAILED(hr)) {
-		MessageBox(NULL, TEXT("ブラシ初期化失敗"), TEXT("ERROR"), MB_OK);
-		return false;
-	}
-	hr = g_target->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Green), &brushes[1]
-	);
-	if (FAILED(hr)) {
-		MessageBox(NULL, TEXT("ブラシ初期化失敗"), TEXT("ERROR"), MB_OK);
-		return false;
-	}
-	hr = g_target->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::Blue), &brushes[2]
+		D2D1::ColorF(D2D1::ColorF::Red), &solidBrush
 	);
 	if (FAILED(hr)) {
 		MessageBox(NULL, TEXT("ブラシ初期化失敗"), TEXT("ERROR"), MB_OK);
@@ -74,7 +60,7 @@ void d2d::endpaint() {
 }
 
 void d2d::finish() {
-	for (int i = 0; i < 3; i++)brushes[i]->Release();
+	solidBrush->Release();
 	g_factory->Release();
 	g_target->Release();
 }
@@ -83,6 +69,9 @@ ID2D1HwndRenderTarget* d2d::getTarget() {
 	return d2d::g_target;
 }
 
-void d2d::drawLine(vector p1, vector p2, int b) {
-	g_target->DrawLine(D2D1::Point2F(p1.x, p1.y), D2D1::Point2F(p2.x, p2.y), brushes[b], 2, NULL);
+void d2d::dot(D2D1_POINT_2F pos, D2D1_COLOR_F color) {
+	//ブラシの色の変更
+	solidBrush->SetColor(color);
+	//点を打つ
+	g_target->DrawLine(pos,D2D1::Point2F(pos.x+3,pos.y+3),solidBrush,3);
 }

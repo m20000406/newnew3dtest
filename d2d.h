@@ -16,7 +16,7 @@ namespace d2d {
 	void endpaint();
 	void finish();
 	ID2D1HwndRenderTarget* getTarget();
-	void drawLine(vector, vector, int);
+	void dot(D2D1_POINT_2F,D2D1_COLOR_F);   //指定位置に指定色で点を打つ
 }
 
 #endif

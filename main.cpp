@@ -19,6 +19,7 @@ int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, in
 	if (!InitApp(hCurInst))return 0;
 	if (!InitInstance(hCurInst, nCmdShow))return 0;   //ウィンドウ関連の初期化
 	d2d::d2dinit(g_hwnd);   //direct2d初期化
+	graphic::init();
 	SetTimer(g_hwnd, TIMER_ID, 33, NULL);   //timerのセット
 	mouse::create();
 	keyboard::create();
@@ -39,6 +40,7 @@ BOOL init(HINSTANCE hCurInst, int nCmdShow) {
 	if (!InitApp(hCurInst))return FALSE;
 	if (!InitInstance(hCurInst, nCmdShow))return FALSE;   //ウィンドウ関連の初期化
 														  //d2d_d2dinit(g_hwnd);   //direct2d初期化
+
 	return true;
 }
 
