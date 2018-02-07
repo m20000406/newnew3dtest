@@ -7,7 +7,7 @@
 #include <math.h>
 
 const float g_near = 0.3;
-const float g_far = 100;   //ãﬂÅEâìïΩñ 
+const float g_far = 200;   //ãﬂÅEâìïΩñ 
 vector g_pos(0,0,-10);
 vector g_eye(0,0,1);
 vector g_right(1,0,0);
@@ -64,6 +64,7 @@ void graphic::turnDown(float t){
 }
 
 void graphic::draw() {
+	d2d::beginpaint();
 	static int r = 5;
 	graphic::initMap();
 	d2d::getTarget()->Clear(D2D1::ColorF(D2D1::ColorF::White));
@@ -83,6 +84,7 @@ void graphic::draw() {
 	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
 	OutputDebugString("####################\n");
 	drawMap();
+	d2d::endpaint();
 }
 
 void graphic::moveCamera(vector v) {
@@ -99,9 +101,12 @@ void graphic::init(){
 	graphic::initMap();
 }
 
-void graphic::dotMap(vector v, color c) {
+void inline graphic::dotMap(vector v, color c) {
 	int x = static_cast<int>(v.x), y = static_cast<int>(v.y);
 	if (x < 0 || x > 600 || y < 0 || y > 900 || v.z < g_near || v.z > g_far)return;
+	if (map[x][y].flag) {   //êÊãqÇ™Ç¢ÇÈ
+		if (map[x][y].k < v.z)return;   //Ç≥ÇÁÇ…é©ï™ÇÊÇËÇ‡ëOÇ…Ç¢ÇÈ
+	}
 	map[x][y] = mapPixel(v.z,c);
 }
 

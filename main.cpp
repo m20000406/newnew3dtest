@@ -189,7 +189,5 @@ void move() {
 
 void callback() {
 	move();
-	d2d::beginpaint();
 	graphic::draw();
-	d2d::endpaint();
 }

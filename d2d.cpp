@@ -73,5 +73,5 @@ void d2d::dot(D2D1_POINT_2F pos, D2D1_COLOR_F color) {
 	//ブラシの色の変更
 	solidBrush->SetColor(color);
 	//点を打つ
-	g_target->DrawLine(pos,D2D1::Point2F(pos.x+3,pos.y+3),solidBrush,3);
+	g_target->DrawLine(pos,D2D1::Point2F(pos.x+1,pos.y+1),solidBrush,1);
 }
