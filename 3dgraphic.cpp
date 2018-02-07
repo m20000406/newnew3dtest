@@ -6,14 +6,14 @@
 #include "d2d.h"
 #include <math.h>
 
-const float g_near = 1;
+const float g_near = 0.3;
 const float g_far = 100;   //ãﬂÅEâìïΩñ 
 vector g_pos(0,0,-10);
 vector g_eye(0,0,1);
 vector g_right(1,0,0);
 vector g_down(0,1,0);
 float PI = 3.141592;
-float theta = PI / 3;   //éãñÏäp
+float theta = PI / 6;   //éãñÏäp
 
 graphic::color::color(unsigned char rr, unsigned char gg, unsigned char bb) :r(rr), g(gg), b(bb) { };
 
@@ -73,14 +73,14 @@ void graphic::draw() {
 	}
 	dotMap(o, color(0,0,0));
 	vector m = graphic::convert(vector(r, 0, 0));
-	if (graphic::isinScreen(m))dotMap(m,color(255,0,0));
-	else OutputDebugString(TEXT("(r,0,0) is not in screen\n"));
+	dotMap(m,color(255,0,0));
+	if(!isinScreen(m)) OutputDebugString(TEXT("(r,0,0) is not in screen\n"));
 	m = graphic::convert(vector(0, r, 0));
-	if (graphic::isinScreen(m))dotMap(m, color(0, 255, 0));
-	else OutputDebugString(TEXT("(0,r,0) is not in screen\n"));
+	dotMap(m, color(0, 255, 0));
+	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,r,0) is not in screen\n"));
 	m = graphic::convert(vector(0, 0, r));
-	if (graphic::isinScreen(m))dotMap(m, color(0, 0, 255));
-	else OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
+	dotMap(m, color(0, 0, 255));
+	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
 	OutputDebugString("####################\n");
 	drawMap();
 }
@@ -101,7 +101,7 @@ void graphic::init(){
 
 void graphic::dotMap(vector v, color c) {
 	int x = static_cast<int>(v.x), y = static_cast<int>(v.y);
-	if (x < 0 || x > 600 || y < 0 || y > 900)return;
+	if (x < 0 || x > 600 || y < 0 || y > 900 || v.z < g_near || v.z > g_far)return;
 	map[x][y] = mapPixel(v.z,c);
 }
 
