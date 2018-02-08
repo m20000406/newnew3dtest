@@ -23,5 +23,6 @@ namespace graphic {
 	void init();   //graphic‘S‘Ì‚Ì‰Šú‰»
 	void dotMap(vector,color);   //map‚É“_‚ğ‘Å‚Â
 	void drawMap();   //map‚ÌÀÛ‚Ì•`‰æ
+	void drawLine(vector,vector,color,float);
 }
 #endif

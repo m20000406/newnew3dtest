@@ -72,15 +72,14 @@ void graphic::draw() {
 	if (!graphic::isinScreen(o)) {
 		OutputDebugString(TEXT("O is not in screen\n"));
 	}
-	dotMap(o, color(0,0,0));
 	vector m = graphic::convert(vector(r, 0, 0));
-	dotMap(m,color(255,0,0));
+	drawLine(o,m,color(255,0,0),2);
 	if(!isinScreen(m)) OutputDebugString(TEXT("(r,0,0) is not in screen\n"));
 	m = graphic::convert(vector(0, r, 0));
-	dotMap(m, color(0, 255, 0));
+	drawLine(o,m,color(0,255,0),2);
 	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,r,0) is not in screen\n"));
 	m = graphic::convert(vector(0, 0, r));
-	dotMap(m, color(0, 0, 255));
+	drawLine(o,m,color(0,0,255),2);
 	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
 	OutputDebugString("####################\n");
 	drawMap();
@@ -108,6 +107,35 @@ void inline graphic::dotMap(vector v, color c) {
 		if (map[x][y].k < v.z)return;   //さらに自分よりも前にいる
 	}
 	map[x][y] = mapPixel(v.z,c);
+}
+
+void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を終点、色をcとして線を引く
+	if (v1.x != v2.x) {
+		float d = (v2.y - v1.y) / (v2.x - v1.x);   //傾き
+		for (int x = floorf(v1.x); x <= -floorf(-v2.x);x++) {
+			float y0;
+			if (d != 0)y0 = d*(x - 0.5 - v2.x) + v2.y - w/2;
+			else y0 = d*(x - 0.5 - v2.x) + v2.y - w/2;
+			y0 = -floorf(-y0);
+			float y2;
+			if(d != 0)y2 = d*(x + 0.5 - v2.x) + v2.y + w/2;
+			else y2 = d*(x + 0.5 - v2.x) + v2.y + w/2;
+			y2 = -floorf(-y2);
+			float z = (v2.z - v1.z) / (v2.x - v1.x)*(x - v2.x) + v2.z;
+			for (int y = y0; y <= y2; y++)dotMap(vector(x,y,z),c);
+		}
+	}
+	else {
+		if (v1.y != v2.y) {
+			for (int y = min(v1.y, v2.y); y <= max(v1.y, v2.y); y++) {
+				float z = (v2.z - v1.z) / (v2.y - v1.y)*(y - v1.y) + v1.z;
+				dotMap(vector(v1.x,y,z),c);
+			}
+		}
+		else {
+			dotMap(v1,c);
+		}
+	}
 }
 
 void graphic::drawMap() {   //mapの実際の描画
