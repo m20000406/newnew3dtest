@@ -69,7 +69,7 @@ void graphic::draw() {
 	graphic::initMap();
 	d2d::getTarget()->Clear(D2D1::ColorF(D2D1::ColorF::White));
 	vector o = graphic::convert(vector(0, 0, 0));
-	if (!graphic::isinScreen(o)) {
+	if (!isinScreen(o)) {
 		OutputDebugString(TEXT("O is not in screen\n"));
 	}
 	vector m = graphic::convert(vector(r, 0, 0));
@@ -77,10 +77,10 @@ void graphic::draw() {
 	if(!isinScreen(m)) OutputDebugString(TEXT("(r,0,0) is not in screen\n"));
 	m = graphic::convert(vector(0, r, 0));
 	drawLine(o,m,color(0,255,0),2);
-	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,r,0) is not in screen\n"));
+	if(!isinScreen(m)) OutputDebugString(TEXT("(0,r,0) is not in screen\n"));
 	m = graphic::convert(vector(0, 0, r));
 	drawLine(o,m,color(0,0,255),2);
-	if(!graphic::isinScreen(m)) OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
+	if(!isinScreen(m)) OutputDebugString(TEXT("(0,0,r) is not in screen\n"));
 	OutputDebugString("####################\n");
 	drawMap();
 	d2d::endpaint();
@@ -110,32 +110,91 @@ void inline graphic::dotMap(vector v, color c) {
 }
 
 void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を終点、色をcとして線を引く
-	if (v1.x != v2.x) {
-		float d = (v2.y - v1.y) / (v2.x - v1.x);   //傾き
-		for (int x = floorf(v1.x); x <= -floorf(-v2.x);x++) {
-			float y0;
-			if (d != 0)y0 = d*(x - 0.5 - v2.x) + v2.y - w/2;
-			else y0 = d*(x - 0.5 - v2.x) + v2.y - w/2;
-			y0 = -floorf(-y0);
-			float y2;
-			if(d != 0)y2 = d*(x + 0.5 - v2.x) + v2.y + w/2;
-			else y2 = d*(x + 0.5 - v2.x) + v2.y + w/2;
-			y2 = -floorf(-y2);
-			float z = (v2.z - v1.z) / (v2.x - v1.x)*(x - v2.x) + v2.z;
-			for (int y = y0; y <= y2; y++)dotMap(vector(x,y,z),c);
-		}
+	v1 = vector(round(v1.x),round(v1.y),v1.z);
+	v2 = vector(round(v2.x),round(v2.y),v2.z);   //整数値に統一
+	if (v1.x > v2.x) {   ///v1のほうが右
+		drawLine(v2,v1,c,w);
+		return;
 	}
-	else {
-		if (v1.y != v2.y) {
-			for (int y = min(v1.y, v2.y); y <= max(v1.y, v2.y); y++) {
-				float z = (v2.z - v1.z) / (v2.y - v1.y)*(y - v1.y) + v1.z;
-				dotMap(vector(v1.x,y,z),c);
+	if (v1.x == v2.x && v1.y == v2.y)return;   //全く同一の点だったら帰る
+	if (v1.x == v2.x) {
+		int y, ymax;
+		float z;   ///yの小さいほう、大きいほう、z
+		if (v1.y < v2.y) y = v1.y,ymax = v2.y, z = v1.z;
+		else y = v2.y,ymax = v1.y, z = v2.z;
+		float dz = (v2.z - v1.z) / (v2.y - v1.y);   //zの増分
+		for (; y <= ymax; y++) {
+			dotMap(vector(v1.x,y,z),c);
+			z += dz;
+		}
+		return;
+	}
+	if (v1.y == v2.y) {
+		float dz = (v2.z - v1.z) / (v2.x - v1.x),z = v1.z;   //zの増分、z初期値
+		for (int x = v1.x; x <= v2.x; x++) {
+			dotMap(vector(x,v1.y,z),c);
+			z += dz;
+		}
+		return;
+	}
+	float inc = (v2.y - v1.y) / (v2.x - v1.x);   //傾き
+	int x = v1.x, y = v1.y, f = 0,dx = v2.x-v1.x,dy = v2.y-v1.y;   //今のx、y、f、x幅、y幅
+	if (inc > 0 && inc <= 1) {
+		float z = v1.z, dz = (v2.z - v1.z) / dx;   //現在のz、zの増分
+		for (; x <= v2.x; x++) {
+			dotMap(vector(x,y,z),c);
+			f += 2 * dy - dx;   //f(x,y)更新
+			if (f < 0) {   //2マス塗るパターン
+				dotMap(vector(x+1,y,z),c);
+				y++;
+				f -= dx;   //f(x,y)更新
 			}
-		}
-		else {
-			dotMap(v1,c);
+			else f += dx;   //f(x,y)更新
+			z += dz;
 		}
 	}
+	else if (inc > 1) {
+		float z = v1.x, dz = (v2.z - v1.z) / dy;
+		for (; y <= v2.y; y++) {
+			dotMap(vector(x,y,z),c);
+			f += dy - 2 * dx;
+			if (f < 0) {   //2マス塗るパターン
+				dotMap(vector(x + 1, y,z),c);
+				x++;
+				f += dy;
+			}
+			else f -= dy;
+			z += dz;
+		}
+	}else if(inc < 0 && inc >= -1){
+		float z = v1.x, dz = (v2.z - v1.z) / dx;
+		for (; x <= v2.x; x++) {
+			dotMap(vector(x,y,z),c);
+			f += 2 * dx - dy;
+			if (f < 0) {   //2マス塗るパターン
+				dotMap(vector(x+1,y,z),c);
+				y--;
+				f += dx;
+			}
+			else f -= dy;
+			z += dz;
+		}
+	}
+	else if (inc < -1) {
+		float z = v1.x, dz = (v2.z - v1.z) / dy;
+		for (; y >= v2.y; y--) {
+			dotMap(vector(x,y,z),c);
+			f += dx + dy;
+			if (f > 0) {
+				dotMap(vector(x,y-1,z),c);
+				x++;
+				f += dy;
+			}
+			else f -= dy;
+			z += dz;
+		}
+	}
+	return;
 }
 
 void graphic::drawMap() {   //mapの実際の描画
