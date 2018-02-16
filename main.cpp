@@ -175,12 +175,12 @@ BOOL InitInstance(HINSTANCE hInst, int nCmdShow) {
 }
 
 void move() {
-	if (keyboard::getInstance()->is(g_keycodeA))graphic::moveCamera(vector(-g_velocity, 0, 0));
-	if (keyboard::getInstance()->is(g_keycodeD))graphic::moveCamera(vector(g_velocity, 0, 0));
-	if (keyboard::getInstance()->is(g_keycodeSpace))graphic::moveCamera(vector(0, g_velocity, 0));
-	if (keyboard::getInstance()->is(g_keycodeShift))graphic::moveCamera(vector(0, -g_velocity, 0));
-	if (keyboard::getInstance()->is(g_keycodeS))graphic::moveCamera(vector(0, 0, g_velocity));
-	if (keyboard::getInstance()->is(g_keycodeW))graphic::moveCamera(vector(0, 0, -g_velocity));
+	if (keyboard::getInstance()->is(g_keycodeA))graphic::goLeft(g_velocity);
+	if (keyboard::getInstance()->is(g_keycodeD))graphic::goRight(g_velocity);
+	if (keyboard::getInstance()->is(g_keycodeSpace))graphic::goDown(g_velocity);
+	if (keyboard::getInstance()->is(g_keycodeShift))graphic::goUp(g_velocity);
+	if (keyboard::getInstance()->is(g_keycodeS))graphic::goForward(g_velocity);
+	if (keyboard::getInstance()->is(g_keycodeW))graphic::goBack(g_velocity);
 	if (keyboard::getInstance()->is(g_keycodeUp))graphic::turnDown(-g_vdeg);
 	if (keyboard::getInstance()->is(g_keycodeDown))graphic::turnDown(g_vdeg);
 	if (keyboard::getInstance()->is(g_keycodeRight))graphic::turnRight(g_vdeg);

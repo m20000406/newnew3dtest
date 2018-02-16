@@ -6,7 +6,7 @@
 #include "d2d.h"
 #include <math.h>
 
-const float g_near = 0.3;
+const float g_near = 1;
 const float g_far = 200;   //近・遠平面
 vector g_pos(0,0,-10);
 vector g_eye(0,0,1);
@@ -119,10 +119,9 @@ void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を
 	if (v1.x == v2.x && v1.y == v2.y)return;   //全く同一の点だったら帰る
 	if (v1.x == v2.x) {
 		int y, ymax;
-		float z;   ///yの小さいほう、大きいほう、z
-		if (v1.y < v2.y) y = v1.y,ymax = v2.y, z = v1.z;
-		else y = v2.y,ymax = v1.y, z = v2.z;
-		float dz = (v2.z - v1.z) / (v2.y - v1.y);   //zの増分
+		float z,dz;   ///yの小さいほう、大きいほう、z、zの増分
+		if (v1.y < v2.y) y = v1.y,ymax = v2.y, z = v1.z,dz = (v1.z-v2.z)/(v1.y-v2.y);
+		else y = v2.y,ymax = v1.y, z = v2.z,dz = -(v1.z - v2.z) / (v1.y - v2.y);
 		for (; y <= ymax; y++) {
 			dotMap(vector(v1.x,y,z),c);
 			z += dz;
@@ -144,7 +143,7 @@ void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を
 		for (; x <= v2.x; x++) {
 			dotMap(vector(x,y,z),c);
 			f += 2 * dy - dx;   //f(x,y)更新
-			if (f < 0) {   //2マス塗るパターン
+			if (f >= 0) {   //2マス塗るパターン
 				dotMap(vector(x+1,y,z),c);
 				y++;
 				f -= dx;   //f(x,y)更新
@@ -154,12 +153,12 @@ void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を
 		}
 	}
 	else if (inc > 1) {
-		float z = v1.x, dz = (v2.z - v1.z) / dy;
+		float z = v1.z, dz = (v2.z - v1.z) / dy;
 		for (; y <= v2.y; y++) {
 			dotMap(vector(x,y,z),c);
 			f += dy - 2 * dx;
-			if (f < 0) {   //2マス塗るパターン
-				dotMap(vector(x + 1, y,z),c);
+			if (f <= 0) {   //2マス塗るパターン
+				dotMap(vector(x, y+1,z),c);
 				x++;
 				f += dy;
 			}
@@ -167,25 +166,25 @@ void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を
 			z += dz;
 		}
 	}else if(inc < 0 && inc >= -1){
-		float z = v1.x, dz = (v2.z - v1.z) / dx;
+		float z = v1.z, dz = (v2.z - v1.z) / dx;
 		for (; x <= v2.x; x++) {
 			dotMap(vector(x,y,z),c);
-			f += 2 * dx - dy;
-			if (f < 0) {   //2マス塗るパターン
+			f += dx+2*dy;
+			if (f <= 0) {   //2マス塗るパターン
 				dotMap(vector(x+1,y,z),c);
 				y--;
 				f += dx;
 			}
-			else f -= dy;
+			else f -= dx;
 			z += dz;
 		}
 	}
 	else if (inc < -1) {
-		float z = v1.x, dz = (v2.z - v1.z) / dy;
+		float z = v1.z, dz = -(v2.z - v1.z) / dy;
 		for (; y >= v2.y; y--) {
 			dotMap(vector(x,y,z),c);
-			f += dx + dy;
-			if (f > 0) {
+			f += 2*dx + dy;
+			if (f >= 0) {
 				dotMap(vector(x,y-1,z),c);
 				x++;
 				f += dy;
@@ -195,6 +194,30 @@ void graphic::drawLine(vector v1,vector v2,color c,float w) {   //v1を始点、v2を
 		}
 	}
 	return;
+}
+
+void graphic::goLeft(float d){
+	g_pos = g_pos - d*g_right;
+}
+
+void graphic::goRight(float d){
+	g_pos = g_pos + d*g_right;
+}
+
+void graphic::goUp(float d){
+	g_pos = g_pos - d*g_down;
+}
+
+void graphic::goDown(float d){
+	g_pos = g_pos + d*g_down;
+}
+
+void graphic::goBack(float d){
+	g_pos = g_pos - d*g_eye;
+}
+
+void graphic::goForward(float d){
+	g_pos = g_pos + d*g_eye;
 }
 
 void graphic::drawMap() {   //mapの実際の描画
