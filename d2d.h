@@ -16,9 +16,16 @@ namespace d2d {
 	void beginpaint();
 	void endpaint();
 	void finish();
-	ID2D1HwndRenderTarget* getTarget();
-	void dot(D2D1_POINT_2F,D2D1_COLOR_F);   //指定位置に指定色で点を打つ
+	void dot(D2D1_POINT_2F);   //指定位置に指定色で点を打つ
 	void outputDebugInfs(std::wstring);
+	void clear();
+	void changeBrushColor(D2D1_COLOR_F);   //solidBrushのいろを帰る
 }
+
+//幅、高さ(はたしてここに書くのは適切か?)
+const int WIDTH = 600;
+const int HEIGHT = 900;
+const float PI = 3.141592;
+const float g_vdeg = PI / 240;
 
 #endif

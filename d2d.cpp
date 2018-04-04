@@ -11,7 +11,7 @@ PAINTSTRUCT paintstruct;   //rect()用
 namespace d2d {
 	bool isLoaded = false;
 	ID2D1Factory* g_factory = NULL;   //ファクトリの初期化
-	ID2D1HwndRenderTarget* g_target = NULL;   //レンダーターゲットの初期化
+	ID2D1HwndRenderTarget* g_target;//レンダーターゲットの初期化
 	HWND hwnd;   //ウィンドウハンドル保持(これいいのか?)
 	ID2D1SolidColorBrush* solidBrush,*stringBlackBrush;   //画面描画用、文字描画用
 	IDWriteFactory* g_wfactory = NULL;   //dwriteのファクトリ
@@ -87,13 +87,12 @@ void d2d::finish() {
 	if(g_target)g_target->Release();
 }
 
-ID2D1HwndRenderTarget* d2d::getTarget() {
-	return d2d::g_target;
+void d2d::changeBrushColor(D2D1_COLOR_F color){
+	//solidBrushの色の変更
+	solidBrush->SetColor(color);
 }
 
-void d2d::dot(D2D1_POINT_2F pos, D2D1_COLOR_F color) {
-	//ブラシの色の変更
-	solidBrush->SetColor(color);
+void d2d::dot(D2D1_POINT_2F pos) {
 	//点を打つ
 	g_target->DrawLine(pos,D2D1::Point2F(pos.x+1,pos.y+1),solidBrush,1);
 }
@@ -101,4 +100,8 @@ void d2d::dot(D2D1_POINT_2F pos, D2D1_COLOR_F color) {
 void d2d::outputDebugInfs(std::wstring str) {
 	g_target->DrawText(str.c_str(), str.length(), g_textformat, D2D1::RectF(0,0,600,900)
 		,stringBlackBrush,D2D1_DRAW_TEXT_OPTIONS_NONE);
+}
+
+void d2d::clear() {
+	g_target->Clear(D2D1::ColorF(D2D1::ColorF::White));
 }

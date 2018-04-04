@@ -17,11 +17,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 ATOM InitApp(HINSTANCE);
 //ウィンドウ作成
 BOOL InitInstance(HINSTANCE, int);
-//幅、高さ
-const int WIDTH = 600;
-const int HEIGHT = 900;
-const float PI = 3.141592;
-const float g_vdeg = PI / 240;
 //移動
 void move();
 //移動距離

@@ -13,13 +13,14 @@ namespace graphic {
 		unsigned char r, g, b;
 		color(unsigned char, unsigned char, unsigned char);
 	};
+	bool operator==(color a, color b);
+	bool operator!=(color a, color b);
 	vector convert(vector);
 	void draw();
 	bool isinScreen(vector);   //•`‰æ”ÍˆÍ“à‚É‚ ‚é‚©”»’è
 	void turnRight(float);   //‚±‚ÌŠp“x‚¾‚¯‰E‚É‰ñ“]
 	void turnDown(float);   //‚±‚ÌŠp“x‚¾‚¯‰º‚É‰ñ“]
 	void moveCamera(vector);   //‚±‚Ìvector‚¾‚¯ˆÚ“®(ˆø”‚ÍƒL[‚Ì”Ô†)
-	void initMap();   //Map‚Ì‰Šú‰»
 	void init();   //graphic‘S‘Ì‚Ì‰Šú‰»
 	void dotMap(vector,color);   //map‚É“_‚ğ‘Å‚Â
 	void drawMap();   //map‚ÌÀÛ‚Ì•`‰æ
