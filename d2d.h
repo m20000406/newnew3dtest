@@ -23,8 +23,8 @@ namespace d2d {
 }
 
 //•A‚‚³(‚Í‚½‚µ‚Ä‚±‚±‚É‘‚­‚Ì‚Í“KØ‚©?)
-const int WIDTH = 600;
-const int HEIGHT = 900;
+//const int WIDTH = 600;
+//const int HEIGHT = 900;
 const float PI = 3.141592;
 const float g_vdeg = PI / 240;
 

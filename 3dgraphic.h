@@ -31,6 +31,7 @@ namespace graphic {
 	void goDown(float);   //下へ移動
 	void goBack(float);   //後ろへ移動
 	void goForward(float);   //前に移動
+	void cmChange();   //変換用の行列の更新用関数 移動直後に呼ぶ
 #ifdef DEBUG
 	void outputDebugInfs();
 #endif

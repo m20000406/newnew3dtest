@@ -1,23 +1,47 @@
 ﻿  3dgraphic.cpp
 c:\repos\3dtest3\3dtest3\d2d.h(28): warning C4305: '初期化中': 'double' から 'float' へ切り詰めます。
-3dgraphic.cpp(14): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-3dgraphic.cpp(93): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(95): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(113): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(118): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(159): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(160): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(165): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(166): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(170): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(174): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(175): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(180): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(181): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(222): warning C4244: '引数': 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-  コード生成しています。
-  4 of 880 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  コード生成が終了しました。
-  3dtest3.vcxproj -> C:\repos\3dtest3\Release\3dtest3.exe
+3dgraphic.cpp(87): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(88): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(94): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(120): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(121): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(122): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(141): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(146): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(168): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(219): warning C4244: '引数': 'double' から 'unsigned int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(264): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(265): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(274): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(275): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(317): warning C4244: '引数': 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
+C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(201): warning C4244: '=': 'const boost::numeric::ublas::type_traits<double>::value_type' から 'boost::numeric::ublas::type_traits<float>::value_type' への変換です。データが失われる可能性があります。
+  C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(200): note: クラス テンプレート のメンバー関数 'void boost::numeric::ublas::scalar_assign<float &,double>::apply(float &,const double &)' のコンパイル中
+  C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/detail/vector_assign.hpp(265): note: コンパイル対象の関数 テンプレート インスタンス化 'void boost::numeric::ublas::scalar_assign<float &,double>::apply(float &,const double &)' のリファレンスを確認してください
+  C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/detail/vector_assign.hpp(446): note: コンパイル対象の クラス テンプレート インスタンス化 'boost::numeric::ublas::scalar_assign<float &,double>' のリファレンスを確認してください
+  C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/vector.hpp(131): note: コンパイル対象の関数 テンプレート インスタンス化 'void boost::numeric::ublas::vector_assign<boost::numeric::ublas::scalar_assign,boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<T,std::allocator<T>>>,boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(V &,const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
+          with
+          [
+              T=float,
+              E1=boost::numeric::ublas::matrix_vector_binary2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix_vector_prod2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,float>>,
+              E2=const double,
+              F=boost::numeric::ublas::scalar_divides<float,double>,
+              V=boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>
+          ]
+  3dgraphic.cpp(203): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<T,std::allocator<T>>>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
+          with
+          [
+              T=float,
+              E1=boost::numeric::ublas::matrix_vector_binary2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix_vector_prod2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,float>>,
+              E2=const double,
+              F=boost::numeric::ublas::scalar_divides<float,double>
+          ]
+  3dgraphic.cpp(203): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<T,std::allocator<T>>>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
+          with
+          [
+              T=float,
+              E1=boost::numeric::ublas::matrix_vector_binary2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix_vector_prod2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,float>>,
+              E2=const double,
+              F=boost::numeric::ublas::scalar_divides<float,double>
+          ]
+  main.cpp

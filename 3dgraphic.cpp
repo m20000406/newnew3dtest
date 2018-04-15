@@ -2,20 +2,29 @@
 //3dgraphic.cpp
 //3dグラフィックに関する諸関数
 ////////////////////////////////////////
+#pragma warning(disable:4996)
 #include "3dgraphic.h"
 #include "d2d.h"
 #include <math.h>
 #include <string>
 #include <boost/format.hpp>
 #include <map>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
+#include <boost/numeric/ublas/lu.hpp>
+#include <iostream>
 
-const float g_near = 10;
+const float g_near = 3;
 const float g_far = 100;   //近・遠平面
-vector g_pos(-0.86, -1.25, -11.225);
+vector g_pos(0, 0, -10);
 vector g_eye(0, 0, 1);
 vector g_right(1, 0, 0);
 vector g_down(0, 1, 0);
-float theta = PI / 6;   //視野角
+float theta = PI / 4;   //視野角
+extern int WIDTH;
+extern int HEIGHT;
+boost::numeric::ublas::matrix<float> M(4, 4);   //convert用行列
 
 graphic::color::color(unsigned char rr, unsigned char gg, unsigned char bb) :r(rr), g(gg), b(bb) { };
 
@@ -53,13 +62,18 @@ std::map<descartes, mapPixel> map;
 
 //点の位置v
 vector graphic::convert(vector v) {
-	vector vec = v - g_pos;
-	float k = vec*g_eye;
-	if (k == 0)return vector(WIDTH / 2, HEIGHT / 2, 1.0e8);
-	vec = g_near / abs(k)*vec;
-	float x = vec*g_right * (min(WIDTH,HEIGHT) / 2) / (2 * g_near*tan(theta));
-	float y = vec*g_down * (min(WIDTH, HEIGHT) / 2) / (2 * g_near*tan(theta));
-	return vector(x, y, k) + vector(WIDTH/2, HEIGHT/2, 0);
+	typedef boost::numeric::ublas::vector<float> fvector;
+	fvector V(4);
+	V(0) = v.x, V(1) = v.y, V(2) = v.z, V(3) = 1;
+	V = prod(M, V);
+	::vector vec(V(0) / (V(3) + 1e-8), V(1) / (V(3) + 1e-8),(v-g_pos)*g_eye);
+	std::string str = (boost::format("M:\n(%1%,%2%,%3%,%4%;\n%5%,%6%,%7%,%8%;\n%9%,%10%,%11%,%12%;\n%13%,%14%,%15%,%16%)\nV:\n(%17%,%18%,%19%)\n")
+		% M(0, 0)% M(0, 1)% M(0, 2)% M(0, 3)% M(1, 0)% M(1, 1)% M(1, 2)% M(1, 3)
+		% M(2, 0)% M(2, 1)% M(2, 2)% M(2, 3)% M(3, 0)% M(3, 1)% M(3, 2)% M(3, 3)
+		%vec.x%vec.y%vec.z
+		).str();
+	OutputDebugString(str.c_str());
+	return vec;
 }
 
 bool graphic::isinScreen(vector v) {
@@ -81,18 +95,16 @@ void graphic::turnDown(float t) {
 }
 
 void graphic::draw() {
+	cmChange();
 	d2d::beginpaint();
 	static int r = 5;
 	map.clear();
 	d2d::clear();
-	//vector o = graphic::convert(vector(0,0,0));
-	//drawLine(o, graphic::convert(vector(10, 0, 0)), color(255,0,0));
-	//drawLine(o, graphic::convert(vector(0,10,0)),color(0,255,0));
-	//drawLine(o, graphic::convert(vector(0, 0, 10)), color(0, 0, 255));
-	for (int x = -10 * r; x <= 10 * r; x += r)
-		drawLine(graphic::convert(vector(-10 * r, x, 0)), graphic::convert(vector(10 * r, x, 0)), color(255, 0, 0));
-	for (int x = -10 * r; x <= 10 * r; x += r)
-		drawLine(graphic::convert(vector(x, -10 * r, 0)), graphic::convert(vector(x, 10 * r, 0)), color(0, 255, 0));
+	dotMap(graphic::convert(vector(r,0,0)),color(255,0,0));
+	dotMap(graphic::convert(vector(0,r,0)),color(0,255,0));
+	dotMap(graphic::convert(vector(0,0,r)),color(0,0,255));
+	dotMap(graphic::convert(vector(0,0,0)),color(0,0,0));
+	OutputDebugString("####################\n");
 	drawMap();
 #ifdef DEBUG
 	outputDebugInfs();
@@ -108,14 +120,15 @@ void graphic::init() {
 	map.clear();
 }
 
+
 void inline graphic::dotMap(vector v, color c) {
-	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT || v.z < g_near || v.z > g_far)return;   //画面外
-	auto itr = map.find(descartes(v.x,v.y));   //(v.x,v.y)を検索
+	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT || v.z < (float)g_near || v.z > (float)g_far)return;   //画面外
+	auto itr = map.find(descartes(v.x, v.y));   //(v.x,v.y)を検索
 	if (itr != map.end()) {   //既に追加されている
-		if (itr->second.k >= v.z)itr->second = mapPixel(v.z,c);   //更新
+		if (itr->second.k >= v.z)itr->second = mapPixel(v.z, c);   //更新
 	}
 	else {   //お初
-		map.insert(std::pair<descartes,mapPixel>(descartes(v.x,v.y),mapPixel(v.z,c)));
+		map.insert(std::pair<descartes, mapPixel>(descartes(v.x, v.y), mapPixel(v.z, c)));
 	}
 }
 
@@ -136,52 +149,133 @@ int whereis(vector v) {
 	return temp;
 }
 
+float deconvert(vector v, vector v1, vector v2) {   //返還後のvから無理矢理元座標を割り出す
+	v -= vector(WIDTH / 2, HEIGHT / 2, 0);
+	v1 -= g_pos;
+	v2 -= g_pos;
+	using namespace boost::numeric::ublas;
+	typedef boost::numeric::ublas::vector<float> fvector;
+	typedef matrix<float> fmatrix;
+	fmatrix A(3, 3);
+	float C = (min(WIDTH, HEIGHT) / 2) / (2 * g_near*tan(theta));
+	A(0, 0) = C*g_right.x, A(0, 1) = C*g_right.y, A(0, 2) = C*g_right.z;
+	A(1, 0) = C*g_down.x, A(1, 1) = C*g_down.y, A(1, 2) = C*g_down.z;
+	A(2, 0) = g_eye.x, A(2, 1) = g_eye.y, A(2, 2) = g_eye.z;
+	fvector vec(3);
+	vec(0) = v.x, vec(1) = v.y, vec(2) = g_near;
+	permutation_matrix<> pm1(A.size1());
+	lu_factorize(A, pm1);
+	lu_substitute(A, pm1, vec);
+
+	fmatrix B(2, 2);
+	B(0, 0) = v2.x - v1.x, B(0, 1) = -vec[0];
+	B(1, 0) = v2.y - v1.y, B(1, 1) = -vec[1];
+	fvector tk(2);
+	tk(0) = -v1.x, tk(1) = -v1.y;
+	permutation_matrix<> pm2(B.size1());
+	lu_factorize(B, pm2);
+	lu_substitute(B, pm2, tk);
+	return tk[0];
+}
+
+typedef boost::numeric::ublas::matrix<float> fmatrix;
+typedef boost::numeric::ublas::vector<float> fvector;   //行列とヴェクタのtypedef
+
+fvector solve2(fmatrix a, fvector b) {   //二元方程式を解く
+	fmatrix a_(2, 2);
+	a_(0, 0) = a(1, 1), a_(0, 1) = -a(0, 1);
+	a_(1, 0) = -a(1, 0), a(1, 1) = a(0, 0);
+	return boost::numeric::ublas::prod(b, a_) / (a(0, 0)*a(1, 1) - a(0, 1)*a(1, 0) + 1.0e-8);
+}
+
+fvector solve3(fmatrix a, fvector b) {
+	fmatrix aa(2, 2);
+	aa(0, 0) = a(0, 0)*a(2, 2) - a(2, 0)*a(0, 2);
+	aa(0, 1) = a(0, 1)*a(2, 2) - a(2, 1)*a(0, 2);
+	aa(1, 0) = a(1, 0)*a(2, 2) - a(2, 0)*a(1, 2);
+	aa(1, 1) = a(1, 1)*a(2, 2) - a(2, 1)*a(1, 2);
+	fvector bb(2);
+	bb(0) = a(2, 2)*b(0) - a(0, 2)*b(2);
+	bb(1) = a(2, 2)*b(1) - a(1, 2)*b(2);
+	fvector xx(2);
+	xx = solve2(aa, bb);
+	fvector x(3);
+	x(0) = xx(0), x(1) = xx(1);
+	x(2) = (b(0) - a(0, 0)*x(0) - a(0, 1)*x(1)) / (a(0, 2 + 1.0e-8));
+	return x;
+}
+
 void graphic::drawLine(vector v1, vector v2, color c) {   //v1を始点、v2を終点、色をcとして線を引く
-	v1 = vector(round(v1.x), round(v1.y), v1.z);
-	v2 = vector(round(v2.x), round(v2.y), v2.z);   //整数値に統一
-	//どちらも平面外の部分のうち「同じ」領域に属していたらその時点でアウト
-	int pv1 = whereis(v1), pv2 = whereis(v2);
-	if ((pv1 & pv2) != 0)return;
-	if (v1.x > v2.x) {   ///v1のほうが右
-		drawLine(v2, v1, c);
-		return;
-	}
-	if (v1.x == v2.x && v1.y == v2.y) {   //同一の点
-		dotMap(vector(v1.x, v1.y, min(v1.z, v2.z)), c);
-		return;
-	}
-	if (v1.x == v2.x) {
-		if (v1.y > v2.y) {   //v1y座標が小さくなるように
-			drawLine(v2, v1, c);
-			return;
+	/*第一案*/
+	//if (v1.x > v2.x)drawLine(v2,v1,c);
+	//if (v1.x == v2.x)return;
+	//for (int x = v1.x; x <= v2.x; x++) {
+	//	float t = (x - v1.x) / (v2.x - v1.x);
+	//	dotMap(graphic::convert(v1+t*(v2-v1)),c);
+	//}
+	/*第二案：setで疑似再帰関数*/
+	//std::set<std::pair<vector, vector>> set;
+	//set.insert(std::pair<vector,vector>(v1,v2));
+	//while (set.size() != 0) {
+	//	auto e = *(set.begin());
+	//	set.erase(set.begin());
+	//	vector _v1 = graphic::convert(e.first), _v2 = graphic::convert(e.second);
+	//	if ((whereis(_v1)&whereis(_v2)) != 0)continue;
+	//	vector vv1 = vector(round(_v1.x), round(_v1.y), _v1.z), 
+	//		vv2 = vector(round(_v2.x), round(_v2.y), _v2.z);
+	//	if ((vv2.x - vv1.x)*(vv2.x - vv1.x) + (vv2.y - vv1.y)*(vv2.y - vv1.y) <= 2) {
+	//		dotMap(vv1,c);
+	//		dotMap(vv2,c);
+	//	}
+	//	else {
+	//		set.insert(std::pair<vector,vector>(e.first,(e.first+e.second)/2));
+	//		set.insert(std::pair<vector,vector>((e.first+e.second)/2,e.second));
+	//	}
+	//}
+	/*第三案:返還後の(x,y)から無理矢理元の座標を割り出す*/
+	//fmatrix a(2, 2);
+	//a(0, 0) = 5, a(0, 1) = 7;
+	//a(1, 0) = 7, a(1, 1) = -3;
+	//fvector b(2);
+	//b(0) = 3, b(1) = 17;
+	//fvector xx(2);
+	//xx = solve2(a, b);
+	//vector cv1 = graphic::convert(v1), cv2 = graphic::convert(v2);
+	//cv1 = vector(round(cv1.x), round(cv1.y), cv1.z), cv2 = vector(round(cv2.x), round(cv2.y), cv2.z);
+	//if (abs(cv2.x - cv1.x) >= abs(cv2.y - cv1.y)) {
+	//	if (cv1.x > cv2.x)drawLine(v2, v1, c);
+	//	float inc = (cv2.y - cv1.y) / (cv2.x - cv1.x);
+	//	float y = inc*(max(0, cv1.x) - cv1.x) + cv1.y;
+	//	for (int x = max(0, cv1.x); x <= min(cv2.x, WIDTH); x++) {
+	//		float t = deconvert(vector(x, y, 0), v1, v2);
+	//		dotMap(graphic::convert(v1 + t*(v2 - v1)), c);
+	//		y += inc;
+	//	}
+	//}
+	//else {
+	//	if (cv1.y > cv2.y)drawLine(v2, v1, c);
+	//	float inc = (cv2.x - cv1.x) / (cv2.y - cv1.y);
+	//	float x = inc*(max(0, cv1.y) - cv1.y) + cv1.x;
+	//	for (int y = max(0, cv1.y); y <= min(cv2.y, HEIGHT); y++) {
+	//		float t = deconvert(vector(x, y, 0), v1, v2);
+	//		dotMap(graphic::convert(v1 + t*(v2 - v1)), c);
+	//		x += inc;
+	//	}
+	//}
+	/*第四案:z>g_nearとz<g_nearで分ける*/
+	std::set<std::pair<vector, vector>> s;
+	s.insert(std::pair<vector,vector>(v1,v2));
+	while (s.size() != 0) {
+		std::pair<vector, vector> p = *(s.begin());
+		s.erase(s.begin());
+		vector _v1 = convert(p.first), _v2 = convert(p.second);
+		if (_v1.z <= g_near && _v2.z <= g_near)continue;
+		else if (_v1.z >= g_far && _v2.z >= g_far)continue;
+		else if (_v1.z * _v2.z <= 0) {
+			s.insert(std::pair<vector,vector>(p.first,(p.first+p.second)/2));
+			s.insert(std::pair<vector,vector>((p.first+p.second)/2,p.second));
 		}
-		float zinc = (v2.z - v1.z) / (v2.y - v1.y);   //yからzを求める時の傾き("inc"line)
-		for (int y = max(0,v1.y); y <= min(HEIGHT,v2.y); y++)
-			dotMap(vector(v1.x, y, zinc*(y - v1.y) + v1.z), c);
-		return;
 	}
-	if (v1.y == v2.y) {
-		float zinc = (v2.z - v1.z) / (v2.x - v1.x);
-		for (int x = max(0,v1.x); x <= min(v2.x,WIDTH); x++)
-			dotMap(vector(x, v1.y, zinc*(x - v1.x) + v1.z), c);
-		return;
-	}
-	float inc = (float)((v2.y - v1.y) / (v2.x - v1.x));   //傾き
-	int dx = v2.x - v1.x, dy = v2.y - v1.y;   //今のx、y、f、x幅、y幅
-	if (dx >= abs(dy)) {
-		float y = inc*(max(0, v1.x) - v1.x) + v1.y;   //打ち始める最初の点
-		float zinc = (v2.z - v1.z) / (v2.x - v1.x);
-		for (int x = max(0, v1.x); x <= min(WIDTH, v2.x); x++)
-			dotMap(vector(x,inc*(x-v1.x)+v1.y,zinc*(x-v1.x)+v1.z),c);
-	}
-	else {
-		inc = (float)dx / dy;
-		float zinc = (v2.z - v1.z) / (v2.y - v1.y);
-		for (int y = max(0, min(v1.y,v2.y)); y <= min(HEIGHT, max(v1.y,v2.y)); y++) {
-			dotMap(vector(inc*(y-v1.y)+v1.x,y,zinc*(y-v1.y)+v1.z),c);
-		}
-	}
-	return;
 }
 
 void graphic::goLeft(float d) {
@@ -215,11 +309,11 @@ void graphic::drawMap() {   //mapの実際の描画
 		descartes d = e.first;   //Pixelと座標
 		if (p.col != pre) {   //前に塗った色と比較
 			D2D1_COLOR_F col =
-				D2D1::ColorF(p.col.r,p.col.g,p.col.b,p.alpha);
+				D2D1::ColorF(p.col.r, p.col.g, p.col.b, p.alpha);
 			d2d::changeBrushColor(col);
 			pre = p.col;
 		}
-		d2d::dot(D2D1::Point2F(d.x,d.y));
+		d2d::dot(D2D1::Point2F(d.x, d.y));
 	}
 }
 
@@ -232,8 +326,8 @@ void graphic::outputDebugInfs() {
 		% g_pos.x%g_pos.y%g_pos.z % (atan2(g_eye.x, g_eye.z) * 180 / PI) % (atan2(-g_eye.y, g_eye.z) * 180 / PI))
 		.str();
 	str += (boost::format("\ng_eye:(%1%,%2%,%3%)\ng_right:(%4%,%5%,%6%)\ng_down:(%7%,%8%,%9%)")
-		%g_eye.x%g_eye.y%g_eye.z%g_right.x%g_right.y%g_right.z%g_down.x%g_down.y%g_down.z).str();
-	str += (boost::format("\ncounter:%1%")%counter).str();
+		% g_eye.x%g_eye.y%g_eye.z%g_right.x%g_right.y%g_right.z%g_down.x%g_down.y%g_down.z).str();
+	str += (boost::format("\ncounter:%1%") % counter).str();
 	wstring wstr(L"");
 	for (auto c : str) {
 		wstr += c;
@@ -242,3 +336,28 @@ void graphic::outputDebugInfs() {
 	counter++;
 }
 #endif
+
+//convert用行列の更新用関数
+void graphic::cmChange() {
+	typedef boost::numeric::ublas::matrix<float> fmatrix;
+	//ワールド→平行移動
+	fmatrix M0(4, 4);
+	M0(0, 0) = 1, M0(0, 1) = 0, M0(0, 2) = 0, M0(0, 3) = -g_pos.x;
+	M0(1, 0) = 0, M0(1, 1) = 1, M0(1, 2) = 0, M0(1, 3) = -g_pos.y;
+	M0(2, 0) = 0, M0(2, 1) = 0, M0(2, 2) = 1, M0(2, 3) = -g_pos.z;
+	M0(3, 0) = 0, M0(3, 1) = 0, M0(3, 2) = 0, M0(3, 3) = 1;
+	//平行移動→視線
+	fmatrix M1(4, 4);
+	M1(0, 0) = g_right.x, M1(0, 1) = g_right.y, M1(0, 2) = g_right.z, M1(0, 3) = 0;
+	M1(1, 0) = g_down.x, M1(1, 1) = g_down.y, M1(1, 2) = g_down.z, M1(1, 3) = 0;
+	M1(2, 0) = g_eye.x, M1(2, 1) = g_eye.y, M1(2, 2) = g_eye.z, M1(2, 3) = 0;
+	M1(3, 0) = 0, M1(3, 1) = 0, M1(3, 2) = 0, M1(3, 3) = 1;
+	//視線→画面
+	fmatrix M2(4, 4);
+	M2(0, 0) = g_near*min(WIDTH, HEIGHT) / 2 / tan(theta), M2(0, 1) = 0, M2(0, 2) = WIDTH / 2, M2(0, 3) = 0;
+	M2(1, 0) = 0, M2(1, 1) = g_near*min(WIDTH, HEIGHT) / 2 / tan(theta), M2(1, 2) = HEIGHT / 2, M2(1, 3) = 0;
+	M2(2, 0) = 0, M2(2, 1) = 0, M2(2, 2) = g_near, M2(2, 3) = 0;
+	M2(3, 0) = 0, M2(3, 1) = 0, M2(3, 2) = 1, M2(3, 3) = 0;
+	M = prod(M1, M0);
+	M = prod(M2, M);
+}
