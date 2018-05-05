@@ -1,18 +1,16 @@
 ﻿  3dgraphic.cpp
 c:\repos\3dtest3\3dtest3\d2d.h(28): warning C4305: '初期化中': 'double' から 'float' へ切り詰めます。
-3dgraphic.cpp(71): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(107): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(108): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(109): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(154): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(205): warning C4244: '引数': 'double' から 'unsigned int' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(322): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(330): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(340): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(348): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(399): warning C4244: '引数': 'int' から 'FLOAT' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(442): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-3dgraphic.cpp(443): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(62): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(96): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(97): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(142): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(193): warning C4244: '引数': 'double' から 'unsigned int' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(310): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(318): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(328): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(336): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(424): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+3dgraphic.cpp(425): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(201): warning C4244: '=': 'const boost::numeric::ublas::type_traits<double>::value_type' から 'boost::numeric::ublas::type_traits<float>::value_type' への変換です。データが失われる可能性があります。
   C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(200): note: クラス テンプレート のメンバー関数 'void boost::numeric::ublas::scalar_assign<float &,double>::apply(float &,const double &)' のコンパイル中
   C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/detail/vector_assign.hpp(265): note: コンパイル対象の関数 テンプレート インスタンス化 'void boost::numeric::ublas::scalar_assign<float &,double>::apply(float &,const double &)' のリファレンスを確認してください
@@ -27,7 +25,7 @@ C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(201): warn
               F=boost::numeric::ublas::scalar_divides<float,double>,
               V=boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>
           ]
-  3dgraphic.cpp(189): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<T,A>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
+  3dgraphic.cpp(177): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<T,A>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
           with
           [
               T=float,
@@ -36,7 +34,7 @@ C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(201): warn
               E2=const double,
               F=boost::numeric::ublas::scalar_divides<float,double>
           ]
-  3dgraphic.cpp(189): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<T,A>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
+  3dgraphic.cpp(177): note: コンパイル対象の関数 テンプレート インスタンス化 'boost::numeric::ublas::vector<T,A>::vector<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>>(const boost::numeric::ublas::vector_expression<boost::numeric::ublas::vector_binary_scalar2<E1,E2,F>> &)' のリファレンスを確認してください
           with
           [
               T=float,
@@ -44,10 +42,83 @@ C:\boost\boost_1_66_0\boost_1_66_0\boost/numeric/ublas/functional.hpp(201): warn
               E1=boost::numeric::ublas::matrix_vector_binary2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix_vector_prod2<boost::numeric::ublas::vector<float,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,boost::numeric::ublas::matrix<float,boost::numeric::ublas::row_major,boost::numeric::ublas::unbounded_array<float,std::allocator<float>>>,float>>,
               E2=const double,
               F=boost::numeric::ublas::scalar_divides<float,double>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\utility(216): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\utility(216): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<float,float>::pair<int,int,void,0>(std::pair<int,int> &&) noexcept' のリファレンスを確認してください
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\utility(214): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<float,float>::pair<int,int,void,0>(std::pair<int,int> &&) noexcept' のリファレンスを確認してください
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xmemory0(856): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<const _Kty,_Ty>::pair<std::pair<int,int>,mapPixel,void,0>(std::pair<std::pair<int,int>,mapPixel> &&) noexcept' のリファレンスを確認してください
+          with
+          [
+              _Kty=descarts,
+              _Ty=mapPixel
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xmemory0(856): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<const _Kty,_Ty>::pair<std::pair<int,int>,mapPixel,void,0>(std::pair<std::pair<int,int>,mapPixel> &&) noexcept' のリファレンスを確認してください
+          with
+          [
+              _Kty=descarts,
+              _Ty=mapPixel
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xtree(773): note: コンパイル対象の関数 テンプレート インスタンス化 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,std::pair<std::pair<int,int>,mapPixel>>(_Alloc &,_Objty *const ,std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Alloc=std::allocator<std::_Tree_node<std::pair<const descarts,mapPixel>,std::_Default_allocator_traits<std::allocator<std::pair<const descarts,mapPixel>>>::void_pointer>>,
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Objty=std::pair<const descarts,mapPixel>
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xtree(772): note: コンパイル対象の関数 テンプレート インスタンス化 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,std::pair<std::pair<int,int>,mapPixel>>(_Alloc &,_Objty *const ,std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Alloc=std::allocator<std::_Tree_node<std::pair<const descarts,mapPixel>,std::_Default_allocator_traits<std::allocator<std::pair<const descarts,mapPixel>>>::void_pointer>>,
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Objty=std::pair<const descarts,mapPixel>
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xtree(961): note: コンパイル対象の関数 テンプレート インスタンス化 'std::_Tree_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_Tree_comp_alloc<_Traits>::_Buynode<std::pair<std::pair<int,int>,mapPixel>>(std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Alloc=std::allocator<std::pair<const descarts,mapPixel>>,
+              _Traits=std::_Tmap_traits<descarts,mapPixel,std::less<descarts>,std::allocator<std::pair<const descarts,mapPixel>>,false>
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\xtree(961): note: コンパイル対象の関数 テンプレート インスタンス化 'std::_Tree_node<_Ty,std::_Default_allocator_traits<_Alloc>::void_pointer> *std::_Tree_comp_alloc<_Traits>::_Buynode<std::pair<std::pair<int,int>,mapPixel>>(std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Alloc=std::allocator<std::pair<const descarts,mapPixel>>,
+              _Traits=std::_Tmap_traits<descarts,mapPixel,std::less<descarts>,std::allocator<std::pair<const descarts,mapPixel>>,false>
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\map(201): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,mapPixel,_Pr,_Alloc,false>>::emplace<std::pair<std::pair<int,int>,mapPixel>>(std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Kty=descarts,
+              _Pr=std::less<descarts>,
+              _Alloc=std::allocator<std::pair<const descarts,mapPixel>>
+          ]
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\map(201): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,mapPixel,_Pr,_Alloc,false>>::emplace<std::pair<std::pair<int,int>,mapPixel>>(std::pair<std::pair<int,int>,mapPixel> &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Kty=descarts,
+              _Pr=std::less<descarts>,
+              _Alloc=std::allocator<std::pair<const descarts,mapPixel>>
+          ]
+  3dgraphic.cpp(121): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::map<descarts,mapPixel,std::less<_Kty>,std::allocator<_Ty>>::insert<std::pair<std::pair<int,int>,mapPixel>,void>(_Valty &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Kty=descarts,
+              _Valty=std::pair<std::pair<int,int>,mapPixel>
+          ]
+  3dgraphic.cpp(121): note: コンパイル対象の関数 テンプレート インスタンス化 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<_Ty>>>,bool> std::map<descarts,mapPixel,std::less<_Kty>,std::allocator<_Ty>>::insert<std::pair<std::pair<int,int>,mapPixel>,void>(_Valty &&)' のリファレンスを確認してください
+          with
+          [
+              _Ty=std::pair<const descarts,mapPixel>,
+              _Kty=descarts,
+              _Valty=std::pair<std::pair<int,int>,mapPixel>
           ]
   コード生成しています。
-  68 of 1031 functions ( 6.6%) were compiled, the rest were copied from previous compilation.
-    3 functions were new in current compilation
-    80 functions had inline decision re-evaluated but remain unchanged
+  9 of 1153 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   3dtest3.vcxproj -> C:\repos\3dtest3\Release\3dtest3.exe

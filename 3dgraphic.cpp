@@ -9,7 +9,6 @@
 #include <string>
 #include <boost/format.hpp>
 #include <map>
-#include <set>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/triangular.hpp>
@@ -17,15 +16,15 @@
 #include <iostream>
 #include <queue>
 
-const float g_near = 3;
+const float g_near = 1;
 const float g_far = 50;   //近・遠平面
 vector g_pos(0, 0, -10);
 vector g_eye(0, 0, 1);
 vector g_right(1, 0, 0);
 vector g_down(0, 1, 0);
 float theta = PI / 4;   //視野角
-extern int WIDTH;
-extern int HEIGHT;
+extern const int WIDTH;
+extern const int HEIGHT;
 boost::numeric::ublas::matrix<float> M(4, 4);   //convert用行列
 
 graphic::color::color(unsigned char rr, unsigned char gg, unsigned char bb) :r(rr), g(gg), b(bb) { };
@@ -50,18 +49,10 @@ public:
 	mapPixel() :k(g_far), col(graphic::color(0, 0, 0)) {};
 };
 
+typedef std::pair<float, float> descarts;
+
+//std::map<descarts, mapPixel> map;
 mapPixel map[600][900];
-
-class descartes {   //mapで座標をキーにする
-public:
-	int x, y;
-	descartes(int _x, int _y) :x(_x), y(_y) {}
-};
-
-bool operator<(descartes l, descartes r) {
-	if (l.x != r.x)return l.x < r.x;
-	return l.y < r.y;
-}
 
 //点の位置v
 vector graphic::convert(vector v) {
@@ -70,12 +61,6 @@ vector graphic::convert(vector v) {
 	V(0) = v.x, V(1) = v.y, V(2) = v.z, V(3) = 1;
 	V = prod(M, V);
 	::vector vec(V(0) / (V(3) + 1e-8), V(1) / (V(3) + 1e-8),(v-g_pos)*g_eye);
-	std::string str = (boost::format("M:\n(%1%,%2%,%3%,%4%;\n%5%,%6%,%7%,%8%;\n%9%,%10%,%11%,%12%;\n%13%,%14%,%15%,%16%)\nV:\n(%17%,%18%,%19%)\n")
-		% M(0, 0)% M(0, 1)% M(0, 2)% M(0, 3)% M(1, 0)% M(1, 1)% M(1, 2)% M(1, 3)
-		% M(2, 0)% M(2, 1)% M(2, 2)% M(2, 3)% M(3, 0)% M(3, 1)% M(3, 2)% M(3, 3)
-		%vec.x%vec.y%vec.z
-		).str();
-	OutputDebugString(str.c_str());
 	return vec;
 }
 
@@ -101,19 +86,14 @@ void graphic::draw() {
 	cmChange();
 	d2d::beginpaint();
 	static int r = 5;
-	for (int x = 0; x < WIDTH; x++) {
+	//map.clear();
+	for (int x = 0; x < WIDTH; x++)
 		for (int y = 0; y < HEIGHT; y++)map[x][y] = mapPixel();
-	}
 	d2d::clear();
-	drawLine(vector(0,0,0),vector(r,0,0),color(255,0,0));
-	drawLine(vector(0,0,0),vector(0,r,0),color(0,255,0));
-	drawLine(vector(0,0,0),vector(0,0,r),color(0,0,255));
-	dotMap(graphic::convert(vector(0,0,-1)),color(0,255,0));
+	for (int x = -10 * r; x <= 10 * r; x += r)drawLine(vector(x,-10*r,0),vector(x,10*r,0),color(255,0,0));
+	for (int y = -10 * r; y <= 10 * r; y += r)drawLine(vector(-10*r,y,0),vector(10*r,y,0),color(0,255,0));
 	OutputDebugString("####################\n");
 	drawMap();
-#ifdef DEBUG
-	outputDebugInfs();
-#endif
 	d2d::endpaint();
 }
 
@@ -122,16 +102,24 @@ void graphic::moveCamera(vector v) {
 }
 
 void graphic::init() {
-	for (int x = 0; x < WIDTH; x++) {
-		for (int y = 0; y < HEIGHT; y++)map[x][y] = mapPixel();
-	}
+	//map.clear();
+	for (int x = 0; x < WIDTH; x++)
+		for (int y = 0; y < HEIGHT; y++)
+			map[x][y] = mapPixel();
 }
 
 void inline graphic::dotMap(vector v, color c) {
+	v = vector((int)round(v.x),(int)round(v.y),v.z);
 	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT || v.z < (float)g_near || v.z > (float)g_far)return;   //画面外
-	if (map[(int)round(v.x)][(int)round(v.y)].k > v.z) {
-		map[(int)round(v.x)][(int)round(v.y)] = mapPixel(v.z,c);
+	/*if (map.find(std::make_pair(round(v.x),round(v.y))) != map.end()) {
+		if(map.find(std::make_pair(round(v.x), round(v.y)))->second.k > v.z)
+			map.find(std::make_pair(round(v.x), round(v.y)))->second = mapPixel(v.z,c);
 	}
+	else
+	map.insert(std::make_pair(std::make_pair((int)round(v.x),(int)round(v.y)), mapPixel(v.z, c)));
+	*/
+	if (map[(int)round(v.x)][(int)round(v.y)].k > v.z)map[(int)round(v.x)][(int)round(v.y)] = mapPixel(v.z,c);
+
 }
 
 //x < 0 →1
@@ -270,7 +258,7 @@ void graphic::drawLine(vector v1, vector v2, color c) {   //v1を始点、v2を終点、
 	//}
 	/*第四案:z>g_nearとz<g_nearで分ける*/
 	std::queue<std::pair<vector, vector>> q;
-	q.push(std::pair<vector,vector>(v1,v2));
+	q.push(std::make_pair(v1,v2));
 	while (q.size() != 0) {
 		std::pair<vector, vector> p = q.front();
 		q.pop();
@@ -391,37 +379,19 @@ void graphic::goForward(float d) {
 }
 
 void graphic::drawMap() {   //mapの実際の描画
-	color pre = color(255, 255, 255);   //前に塗った色
+	//for (auto e : map) {
+	//	d2d::changeBrushColor(D2D1::ColorF(e.second.col.r,e.second.col.g,e.second.col.b,e.second.alpha));
+	//	d2d::dot(D2D1::Point2F(e.first.first,e.first.second));
+	//}
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
 			if (map[x][y].k != g_far) {
-				if (pre != map[x][y].col)d2d::changeBrushColor(
-					D2D1::ColorF(map[x][y].col.r,map[x][y].col.g,map[x][y].col.b,map[x][y].alpha));
+				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r,map[x][y].col.g,map[x][y].col.b,map[x][y].alpha));
 				d2d::dot(D2D1::Point2F(x,y));
 			}
 		}
 	}
 }
-
-#ifdef DEBUG
-void graphic::outputDebugInfs() {
-	using namespace std;
-	static int counter = 0;
-	string str = (boost::format(
-		"position:(%1%,%2%,%3%)\nright degree:%4%\nup degree:%5%")
-		% g_pos.x%g_pos.y%g_pos.z % (atan2(g_eye.x, g_eye.z) * 180 / PI) % (atan2(-g_eye.y, g_eye.z) * 180 / PI))
-		.str();
-	str += (boost::format("\ng_eye:(%1%,%2%,%3%)\ng_right:(%4%,%5%,%6%)\ng_down:(%7%,%8%,%9%)")
-		% g_eye.x%g_eye.y%g_eye.z%g_right.x%g_right.y%g_right.z%g_down.x%g_down.y%g_down.z).str();
-	str += (boost::format("\ncounter:%1%") % counter).str();
-	wstring wstr(L"");
-	for (auto c : str) {
-		wstr += c;
-	}
-	d2d::outputDebugInfs(wstr);
-	counter++;
-}
-#endif
 
 //convert用行列の更新用関数
 void graphic::cmChange() {

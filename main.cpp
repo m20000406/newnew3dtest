@@ -12,8 +12,8 @@
 void callback();   //30fpsで呼び出される関数
 HWND g_hwnd;   //ウィンドウハンドル
 
-int WIDTH = 600;   //横
-int HEIGHT = 900;   //縦
+extern const int WIDTH = 600;   //横
+extern const int HEIGHT = 900;   //縦
 
 int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, int nCmdShow) {
 	MSG msg;
