@@ -7,7 +7,6 @@
 #include "d2d.h"
 #include <math.h>
 #include <string>
-#include <boost/format.hpp>
 #include <map>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
@@ -54,6 +53,12 @@ typedef std::pair<float, float> descarts;
 //std::map<descarts, mapPixel> map;
 mapPixel map[600][900];
 
+inline void clearMap() {
+	for (int x = 0; x < WIDTH; x++)
+		for (int y = 0; y < HEIGHT; y++)
+			map[x][y] = mapPixel();
+}
+
 //点の位置v
 vector graphic::convert(vector v) {
 	typedef boost::numeric::ublas::vector<float> fvector;
@@ -86,13 +91,13 @@ void graphic::draw() {
 	cmChange();
 	d2d::beginpaint();
 	static int r = 5;
-	//map.clear();
-	for (int x = 0; x < WIDTH; x++)
-		for (int y = 0; y < HEIGHT; y++)map[x][y] = mapPixel();
+	clearMap();
 	d2d::clear();
 	for (int x = -10 * r; x <= 10 * r; x += r)drawLine(vector(x,-10*r,0),vector(x,10*r,0),color(255,0,0));
 	for (int y = -10 * r; y <= 10 * r; y += r)drawLine(vector(-10*r,y,0),vector(10*r,y,0),color(0,255,0));
-	OutputDebugString("####################\n");
+	//drawLine(vector(0, 0, 0), vector(r,0,0),color(255,0,0));
+	//drawLine(vector(0,0,0),vector(0,r,0),color(0,255,0));
+	//drawLine(vector(0,0,0),vector(0,0,r),color(0,0,255));
 	drawMap();
 	d2d::endpaint();
 }
@@ -110,7 +115,7 @@ void graphic::init() {
 
 void inline graphic::dotMap(vector v, color c) {
 	v = vector((int)round(v.x),(int)round(v.y),v.z);
-	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT || v.z < (float)g_near || v.z > (float)g_far)return;   //画面外
+	if (v.x < 0 || v.x >= WIDTH || v.y < 0 || v.y >= HEIGHT || v.z < (float)g_near || v.z > (float)g_far)return;   //画面外
 	/*if (map.find(std::make_pair(round(v.x),round(v.y))) != map.end()) {
 		if(map.find(std::make_pair(round(v.x), round(v.y)))->second.k > v.z)
 			map.find(std::make_pair(round(v.x), round(v.y)))->second = mapPixel(v.z,c);
@@ -122,140 +127,25 @@ void inline graphic::dotMap(vector v, color c) {
 
 }
 
-//x < 0 →1
-//x > WIDTH →10
-//y < 0 → 100
-//y > HEIGHT → 1000
-//z < g_near → 10000
-//z > g_far → 100000
+//x < 0 -> 1
+//x > WIDTH -> 2
+//z > g_far -> 4
+//0 < z < g_near -> 8
+//y < 0 -> 16
+//y > HEIGHT -> 32
+//z < 0 -> 64
 int whereis(vector v) {
 	int temp = 0;
+	if (v.z < g_near)return 64;
 	if (v.x < 0)temp |= 1;
 	else if (v.x > WIDTH)temp |= 2;
-	if (v.y < 0)temp |= 4;
-	else if (v.y > HEIGHT)temp |= 8;
-	if (v.z < g_near)temp |= 16;
-	else if (v.z > g_far)temp |= 32;
+	if (v.z > g_far)temp |= 4;
+	if (v.y < 0)temp |= 8;
+	else if (v.y > HEIGHT)temp |= 16;
 	return temp;
 }
 
-float deconvert(vector v, vector v1, vector v2) {   //返還後のvから無理矢理元座標を割り出す
-	v -= vector(WIDTH / 2, HEIGHT / 2, 0);
-	v1 -= g_pos;
-	v2 -= g_pos;
-	using namespace boost::numeric::ublas;
-	typedef boost::numeric::ublas::vector<float> fvector;
-	typedef matrix<float> fmatrix;
-	fmatrix A(3, 3);
-	float C = (min(WIDTH, HEIGHT) / 2) / (2 * g_near*tan(theta));
-	A(0, 0) = C*g_right.x, A(0, 1) = C*g_right.y, A(0, 2) = C*g_right.z;
-	A(1, 0) = C*g_down.x, A(1, 1) = C*g_down.y, A(1, 2) = C*g_down.z;
-	A(2, 0) = g_eye.x, A(2, 1) = g_eye.y, A(2, 2) = g_eye.z;
-	fvector vec(3);
-	vec(0) = v.x, vec(1) = v.y, vec(2) = g_near;
-	permutation_matrix<> pm1(A.size1());
-	lu_factorize(A, pm1);
-	lu_substitute(A, pm1, vec);
-
-	fmatrix B(2, 2);
-	B(0, 0) = v2.x - v1.x, B(0, 1) = -vec[0];
-	B(1, 0) = v2.y - v1.y, B(1, 1) = -vec[1];
-	fvector tk(2);
-	tk(0) = -v1.x, tk(1) = -v1.y;
-	permutation_matrix<> pm2(B.size1());
-	lu_factorize(B, pm2);
-	lu_substitute(B, pm2, tk);
-	return tk[0];
-}
-
-typedef boost::numeric::ublas::matrix<float> fmatrix;
-typedef boost::numeric::ublas::vector<float> fvector;   //行列とヴェクタのtypedef
-
-fvector solve2(fmatrix a, fvector b) {   //二元方程式を解く
-	fmatrix a_(2, 2);
-	a_(0, 0) = a(1, 1), a_(0, 1) = -a(0, 1);
-	a_(1, 0) = -a(1, 0), a(1, 1) = a(0, 0);
-	return boost::numeric::ublas::prod(b, a_) / (a(0, 0)*a(1, 1) - a(0, 1)*a(1, 0) + 1.0e-8);
-}
-
-fvector solve3(fmatrix a, fvector b) {
-	fmatrix aa(2, 2);
-	aa(0, 0) = a(0, 0)*a(2, 2) - a(2, 0)*a(0, 2);
-	aa(0, 1) = a(0, 1)*a(2, 2) - a(2, 1)*a(0, 2);
-	aa(1, 0) = a(1, 0)*a(2, 2) - a(2, 0)*a(1, 2);
-	aa(1, 1) = a(1, 1)*a(2, 2) - a(2, 1)*a(1, 2);
-	fvector bb(2);
-	bb(0) = a(2, 2)*b(0) - a(0, 2)*b(2);
-	bb(1) = a(2, 2)*b(1) - a(1, 2)*b(2);
-	fvector xx(2);
-	xx = solve2(aa, bb);
-	fvector x(3);
-	x(0) = xx(0), x(1) = xx(1);
-	x(2) = (b(0) - a(0, 0)*x(0) - a(0, 1)*x(1)) / (a(0, 2 + 1.0e-8));
-	return x;
-}
-
-bool operator<(std::pair<vector, vector> p1, std::pair<vector, vector> p2) {
-	return p1.first.x < p2.first.x;
-}
-
 void graphic::drawLine(vector v1, vector v2, color c) {   //v1を始点、v2を終点、色をcとして線を引く
-	/*第一案*/
-	//if (v1.x > v2.x)drawLine(v2,v1,c);
-	//if (v1.x == v2.x)return;
-	//for (int x = v1.x; x <= v2.x; x++) {
-	//	float t = (x - v1.x) / (v2.x - v1.x);
-	//	dotMap(graphic::convert(v1+t*(v2-v1)),c);
-	//}
-	/*第二案：setで疑似再帰関数*/
-	//std::set<std::pair<vector, vector>> set;
-	//set.insert(std::pair<vector,vector>(v1,v2));
-	//while (set.size() != 0) {
-	//	auto e = *(set.begin());
-	//	set.erase(set.begin());
-	//	vector _v1 = graphic::convert(e.first), _v2 = graphic::convert(e.second);
-	//	if ((whereis(_v1)&whereis(_v2)) != 0)continue;
-	//	vector vv1 = vector(round(_v1.x), round(_v1.y), _v1.z), 
-	//		vv2 = vector(round(_v2.x), round(_v2.y), _v2.z);
-	//	if ((vv2.x - vv1.x)*(vv2.x - vv1.x) + (vv2.y - vv1.y)*(vv2.y - vv1.y) <= 2) {
-	//		dotMap(vv1,c);
-	//		dotMap(vv2,c);
-	//	}
-	//	else {
-	//		set.insert(std::pair<vector,vector>(e.first,(e.first+e.second)/2));
-	//		set.insert(std::pair<vector,vector>((e.first+e.second)/2,e.second));
-	//	}
-	//}
-	/*第三案:返還後の(x,y)から無理矢理元の座標を割り出す*/
-	//fmatrix a(2, 2);
-	//a(0, 0) = 5, a(0, 1) = 7;
-	//a(1, 0) = 7, a(1, 1) = -3;
-	//fvector b(2);
-	//b(0) = 3, b(1) = 17;
-	//fvector xx(2);
-	//xx = solve2(a, b);
-	//vector cv1 = graphic::convert(v1), cv2 = graphic::convert(v2);
-	//cv1 = vector(round(cv1.x), round(cv1.y), cv1.z), cv2 = vector(round(cv2.x), round(cv2.y), cv2.z);
-	//if (abs(cv2.x - cv1.x) >= abs(cv2.y - cv1.y)) {
-	//	if (cv1.x > cv2.x)drawLine(v2, v1, c);
-	//	float inc = (cv2.y - cv1.y) / (cv2.x - cv1.x);
-	//	float y = inc*(max(0, cv1.x) - cv1.x) + cv1.y;
-	//	for (int x = max(0, cv1.x); x <= min(cv2.x, WIDTH); x++) {
-	//		float t = deconvert(vector(x, y, 0), v1, v2);
-	//		dotMap(graphic::convert(v1 + t*(v2 - v1)), c);
-	//		y += inc;
-	//	}
-	//}
-	//else {
-	//	if (cv1.y > cv2.y)drawLine(v2, v1, c);
-	//	float inc = (cv2.x - cv1.x) / (cv2.y - cv1.y);
-	//	float x = inc*(max(0, cv1.y) - cv1.y) + cv1.x;
-	//	for (int y = max(0, cv1.y); y <= min(cv2.y, HEIGHT); y++) {
-	//		float t = deconvert(vector(x, y, 0), v1, v2);
-	//		dotMap(graphic::convert(v1 + t*(v2 - v1)), c);
-	//		x += inc;
-	//	}
-	//}
 	/*第四案:z>g_nearとz<g_nearで分ける*/
 	std::queue<std::pair<vector, vector>> q;
 	q.push(std::make_pair(v1,v2));
