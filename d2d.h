@@ -2,8 +2,7 @@
 //d2d.h
 //direct2dÇ…ä÷Ç∑ÇÈèîã@î\
 /////////////////////////////
-#ifndef INCLUDE_D2D_H
-#define INCLUDE_D2D_H
+#pragma once
 #pragma comment(lib,"d2d1.lib")
 #include <windows.h>
 #include <D2D1.h>
@@ -27,5 +26,3 @@ namespace d2d {
 //const int HEIGHT = 900;
 const float PI = 3.141592;
 const float g_vdeg = PI / 240;
-
-#endif

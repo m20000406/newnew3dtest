@@ -9,6 +9,8 @@ vector vector::zero = vector(0, 0, 0);
 
 vector::vector(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
 
+vector::vector():x(0),y(0),z(0){}
+
 vector operator+(vector a, vector b) {
 	return vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }

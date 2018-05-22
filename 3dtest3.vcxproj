@@ -118,19 +118,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="3dgraphic.cpp" />
+    <ClCompile Include="color.cpp" />
     <ClCompile Include="d2d.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="object.cpp" />
+    <ClCompile Include="obj_axis.cpp" />
+    <ClCompile Include="obj_line.cpp" />
     <ClCompile Include="vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dgraphic.h" />
+    <ClInclude Include="color.h" />
     <ClInclude Include="d2d.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="obj_axis.h" />
+    <ClInclude Include="obj_line.h" />
     <ClInclude Include="vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="stage.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

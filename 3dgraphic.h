@@ -2,19 +2,12 @@
 //3dgraphic.h
 //3dグラフィックに関する諸関数
 ////////////////////////////////////////
-#ifndef INCLUDE_3DGRAPHIC_H
-#define INCLUDE_3DGRAPHIC_H
+#pragma once
 #include "vector.h"
+#include "color.h"
 #define DEBUG
 
 namespace graphic {
-	class color {   //色保存用のクラス r,g,b,それだけ。
-	public:
-		unsigned char r, g, b;
-		color(unsigned char, unsigned char, unsigned char);
-	};
-	bool operator==(color a, color b);
-	bool operator!=(color a, color b);
 	vector convert(vector);
 	void draw();
 	bool isinScreen(vector);   //描画範囲内にあるか判定
@@ -32,8 +25,9 @@ namespace graphic {
 	void goBack(float);   //後ろへ移動
 	void goForward(float);   //前に移動
 	void cmChange();   //変換用の行列の更新用関数 移動直後に呼ぶ
+	int whereis(vector);   //その点がどのような位置にあるか
+	void clearMap();
 #ifdef DEBUG
 	void outputDebugInfs();
 #endif
 }
-#endif

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<stage>
+  <name>test Stage</name>
+  <objects>
+    <obj_line>
+      <tag>tag1</tag>
+      <point1 x="0" y="0" z ="0"/>
+      <point2 x="10" y="10" z="10"/>
+      <color r="255" g="0" b="0"/>
+    </obj_line>
+  </objects>
+</stage>

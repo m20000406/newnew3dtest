@@ -8,9 +8,13 @@
 #include "vector.h"
 #include "3dgraphic.h"
 #include "d2d.h"
+#include "object.h"
+#include "obj_line.h"
+#include <vector>
 
 void callback();   //30fpsで呼び出される関数
 HWND g_hwnd;   //ウィンドウハンドル
+std::vector<std::shared_ptr<IObject>> objs;   //オブジェクトの配列
 
 extern const int WIDTH = 600;   //横
 extern const int HEIGHT = 900;   //縦
@@ -26,6 +30,7 @@ int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, in
 		d2d::finish();
 		return FALSE;
 	}
+	objs.push_back(objFactory("obj_axis"));
 	graphic::init();
 	SetTimer(g_hwnd, TIMER_ID, 33, NULL);   //timerのセット
 	mouse::create();
@@ -195,5 +200,20 @@ void move() {
 
 void callback() {
 	move();
-	graphic::draw();
+	draw();
+}
+
+
+
+void draw() {
+	graphic::cmChange();
+	d2d::beginpaint();
+	static int r = 5;
+	graphic::clearMap();
+	d2d::clear();
+
+	for (int i = 0; i < objs.size(); i++)objs[i]->draw();
+
+	graphic::drawMap();
+	d2d::endpaint();
 }

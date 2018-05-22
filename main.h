@@ -2,8 +2,7 @@
 //main.h
 //main.cppのへっだ
 //////////////////////////////
-#ifndef INCLUDE_MAIN_H
-#define INCLUDE_MAIN_H
+#pragma once
 #include <windows.h>
 
 //timerID
@@ -19,6 +18,8 @@ ATOM InitApp(HINSTANCE);
 BOOL InitInstance(HINSTANCE, int);
 //移動
 void move();
+//毎チック呼ばれる関数
+void draw();
 //移動距離
 const float g_velocity = 0.25;
 //キーコード
@@ -32,5 +33,3 @@ const int g_keycodeUp = 38;
 const int g_keycodeDown = 40;
 const int g_keycodeRight = 39;
 const int g_keycodeLeft = 37;
-
-#endif
