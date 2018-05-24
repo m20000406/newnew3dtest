@@ -125,7 +125,6 @@
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="obj_axis.cpp" />
-    <ClCompile Include="obj_line.cpp" />
     <ClCompile Include="vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +136,6 @@
     <ClInclude Include="mouse.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="obj_axis.h" />
-    <ClInclude Include="obj_line.h" />
     <ClInclude Include="vector.h" />
   </ItemGroup>
   <ItemGroup>

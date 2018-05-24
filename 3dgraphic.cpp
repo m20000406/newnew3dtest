@@ -14,7 +14,6 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <iostream>
 #include <queue>
-#include "obj_line.h"
 
 const float g_near = 1;
 const float g_far = 50;   //近・遠平面
@@ -57,7 +56,7 @@ vector graphic::convert(vector v) {
 	fvector V(4);
 	V(0) = v.x, V(1) = v.y, V(2) = v.z, V(3) = 1;
 	V = prod(M, V);
-	::vector vec(V(0) / (V(3) + 1e-8), V(1) / (V(3) + 1e-8),(v-g_pos)*g_eye);
+	::vector vec(V(0) / (V(3) + 1e-8), V(1) / (V(3) + 1e-8), (v - g_pos)*g_eye);
 	return vec;
 }
 
@@ -85,8 +84,8 @@ void graphic::draw() {
 	static int r = 5;
 	clearMap();
 	d2d::clear();
-	for (int x = -10 * r; x <= 10 * r; x += r)drawLine(vector(x,-10*r,0),vector(x,10*r,0),color(255,0,0));
-	for (int y = -10 * r; y <= 10 * r; y += r)drawLine(vector(-10*r,y,0),vector(10*r,y,0),color(0,255,0));
+	for (int x = -10 * r; x <= 10 * r; x += r)drawLine(vector(x, -10 * r, 0), vector(x, 10 * r, 0), color(255, 0, 0));
+	for (int y = -10 * r; y <= 10 * r; y += r)drawLine(vector(-10 * r, y, 0), vector(10 * r, y, 0), color(0, 255, 0));
 	//drawLine(vector(0, 0, 0), vector(r,0,0),color(255,0,0));
 	//drawLine(vector(0,0,0),vector(0,r,0),color(0,255,0));
 	//drawLine(vector(0,0,0),vector(0,0,r),color(0,0,255));
@@ -106,9 +105,9 @@ void graphic::init() {
 }
 
 void graphic::dotMap(vector v, color c) {
-	v = vector((int)round(v.x),(int)round(v.y),v.z);
-	if (v.x < 0 || v.x >= WIDTH || v.y < 0 || v.y >= HEIGHT || v.z < (float)g_near || v.z > (float)g_far)return;   //画面外
-	if (map[(int)round(v.x)][(int)round(v.y)].k > v.z)map[(int)round(v.x)][(int)round(v.y)] = mapPixel(v.z,c);
+	v = vector((int)round(v.x), (int)round(v.y), v.z);
+	if (v.x < 0 || v.x >= WIDTH || v.y < 0 || v.y >= HEIGHT || v.z < (float)g_near || v.z >(float)g_far)return;   //画面外
+	if (map[(int)round(v.x)][(int)round(v.y)].k > v.z)map[(int)round(v.x)][(int)round(v.y)] = mapPixel(v.z, c);
 
 }
 
@@ -131,6 +130,103 @@ int graphic::whereis(vector v) {
 }
 
 void graphic::drawLine(vector v1, vector v2, color c) {   //v1を始点、v2を終点、色をcとして線を引く
+	/*第四案:z>g_nearとz<g_nearで分ける*/
+	std::queue<std::pair<vector, vector>> q;
+	q.push(std::make_pair(v1, v2));
+	while (q.size() != 0) {
+		std::pair<vector, vector> p = q.front();
+		q.pop();
+		vector _v1 = graphic::convert(p.first), _v2 = graphic::convert(p.second);
+		int w1 = whereis(_v1), w2 = whereis(_v2);
+		if (w1 == 0 && w2 == 0) {   //まともに描画する場合
+			_v1 = vector(round(_v1.x), round(_v1.y), round(_v1.z)),
+				_v2 = vector(round(_v2.x), round(_v2.y), round(_v2.z));
+			if (_v1.x == _v2.x && _v1.y == _v2.y) {
+				if (_v1.z < _v2.z)dotMap(vector(_v1.x, _v1.y, _v1.z), c);
+				else dotMap(vector(_v1.x, _v1.y, _v2.z), c);
+			}
+			else if (_v1.x == _v2.x) {
+				if (_v1.y <= _v2.y) {
+					vector v = _v1;
+					vector t = (_v2 - _v1) / (_v2.y - _v1.y);
+					while (v.y <= _v2.y) {
+						dotMap(v, c);
+						v = v + t;
+					}
+				}
+				else {
+					vector v = _v2;
+					vector t = (_v1 - _v2) / (_v1.y - _v2.y);
+					while (v.y <= _v1.y) {
+						dotMap(v, c);
+						v = v + t;
+					}
+				}
+			}
+			else if (_v1.y == _v2.y) {
+				if (_v1.x <= _v2.x) {
+					vector v = _v1;
+					vector t = (_v2 - _v1) / (_v2.x - _v1.x);
+					while (v.x <= _v2.x) {
+						dotMap(v, c);
+						v = v + t;
+					}
+				}
+				else {
+					vector v = _v2;
+					vector t = (_v2 - _v1) / (_v2.x - _v1.x);
+					while (v.x <= _v2.x) {
+						dotMap(v, c);
+						v = v + t;
+					}
+				}
+			}
+			else if (abs(_v1.x - _v2.x) >= abs(_v1.y - _v2.y)) {
+				if (_v1.x <= _v2.x) {
+					float t = 1 / (_v2.x - _v1.x + 1.0e-8);
+					vector v = _v1;
+					while (v.x <= _v2.x) {
+						dotMap(v, c);
+						v = v + t*(_v2 - _v1);
+					}
+				}
+				else {
+					float t = 1 / (_v1.x - _v2.x + 1.0e-8);
+					vector v = _v2;
+					while (v.x <= _v1.x) {
+						dotMap(v, c);
+						v = v + t*(_v1 - _v2);
+					}
+				}
+			}
+			else {
+				if (_v1.y <= _v2.y) {
+					float t = 1 / (_v2.y - _v1.y + 1.0e-8);
+					vector v = _v1;
+					while (v.y <= _v2.y) {
+						dotMap(v, c);
+						v = v + t*(_v2 - _v1);
+					}
+				}
+				else {
+					float t = 1 / (_v1.y - _v2.y + 1.0e-8);
+					vector v = _v2;
+					while (v.y <= _v1.y) {
+						dotMap(v, c);
+						v = v + t*(_v1 - _v2);
+					}
+				}
+			}
+			continue;
+		}
+		if ((_v1 - _v2).norm() < 1)continue;//幅１未満
+		else if ((w1 & w2) != 0)continue;   //共通の範囲(描画範囲外)であったら消去だけして帰る
+		else if (w1 != 0 || w2 != 0) {   //どちらも描画範囲内というわけではないなら中点分割
+			q.push(std::pair<vector, vector>(p.first, (p.first + p.second) / 2));
+			q.push(std::pair<vector, vector>((p.first + p.second) / 2, p.second));
+			continue;
+		}
+	}
 }
 
 void graphic::goLeft(float d) {
@@ -165,8 +261,8 @@ void graphic::drawMap() {   //mapの実際の描画
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
 			if (map[x][y].k != g_far) {
-				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r,map[x][y].col.g,map[x][y].col.b,map[x][y].alpha));
-				d2d::dot(D2D1::Point2F(x,y));
+				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r, map[x][y].col.g, map[x][y].col.b, map[x][y].alpha));
+				d2d::dot(D2D1::Point2F(x, y));
 			}
 		}
 	}
