@@ -1,3 +1,6 @@
+/// <summary>
+/// 数直線描画用オブジェクト
+/// </summary>
 #include "obj_axis.h"
 #include "vector.h"
 #include "3dgraphic.h"

@@ -1,8 +1,10 @@
-/////////////////////////////
-//d2d.h
-//direct2d‚ÉŠÖ‚·‚é”‹@”\
-/////////////////////////////
-#pragma once
+/**
+ * @brief d2d.h/direct2dé–¢ä¿‚ã®h
+ * 
+ * @file d2d.h
+ * @author your name
+ * @date 2018-05-29
+ */
 #pragma comment(lib,"d2d1.lib")
 #include <windows.h>
 #include <D2D1.h>
@@ -15,14 +17,14 @@ namespace d2d {
 	void beginpaint();
 	void endpaint();
 	void finish();
-	void dot(D2D1_POINT_2F);   //w’èˆÊ’u‚Éw’èF‚Å“_‚ğ‘Å‚Â
+	void dot(D2D1_POINT_2F);   //ï¿½wï¿½ï¿½Ê’uï¿½Éwï¿½ï¿½Fï¿½Å“_ï¿½ï¿½Å‚ï¿½
 	void outputDebugInfs(std::wstring);
 	void clear();
-	void changeBrushColor(D2D1_COLOR_F);   //solidBrush‚Ì‚¢‚ë‚ğ‹A‚é
+	void changeBrushColor(D2D1_COLOR_F);   //solidBrushï¿½Ì‚ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½
 }
 
-//•A‚‚³(‚Í‚½‚µ‚Ä‚±‚±‚É‘‚­‚Ì‚Í“KØ‚©?)
+//ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½(ï¿½Í‚ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½ï¿½ï¿½Ì‚Í“Kï¿½Ø‚ï¿½?)
 //const int WIDTH = 600;
 //const int HEIGHT = 900;
-const float PI = 3.141592;
+const float PI = 3.141592f;
 const float g_vdeg = PI / 240;

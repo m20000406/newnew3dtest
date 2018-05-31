@@ -1,7 +1,3 @@
-/////////////////////////////
-//main.cpp
-//ƒƒCƒ“‚Ìƒ\[ƒXƒtƒ@ƒCƒ‹B‚ñ‚È‚±‚½‘‚©‚È‚­‚Ä‚à‚í‚©‚éB
-//////////////////////////////
 #include "main.h"
 #include "keyboard.h"
 #include "mouse.h"
@@ -11,30 +7,63 @@
 #include "object.h"
 #include <vector>
 
-void callback();   //30fps‚ÅŒÄ‚Ño‚³‚ê‚éŠÖ”
-HWND g_hwnd;   //ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-std::vector<std::shared_ptr<IObject>> objs;   //ƒIƒuƒWƒFƒNƒg‚Ì”z—ñ
+void callback();   //30fpsï¿½ÅŒÄ‚Ñoï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½
+HWND g_hwnd;   //ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+std::vector<std::shared_ptr<IObject>> objs;   //ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ì”zï¿½ï¿½
 
-extern const int WIDTH = 600;   //‰¡
-extern const int HEIGHT = 900;   //c
+extern const int WIDTH = 600;   //ï¿½ï¿½
+extern const int HEIGHT = 900;   //ï¿½c
 
 int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, int nCmdShow) {
 	MSG msg;
 	BOOL bRet;
 
 	if (!InitApp(hCurInst))return 0;
-	if (!InitInstance(hCurInst, nCmdShow))return 0;   //ƒEƒBƒ“ƒhƒEŠÖ˜A‚Ì‰Šú‰»
+	if (!InitInstance(hCurInst, nCmdShow))return 0;   //ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ö˜Aï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
 	
-	if (!d2d::d2dinit(g_hwnd)) {//direct2d‰Šú‰»
+	if (!d2d::d2dinit(g_hwnd)) {//direct2dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		d2d::finish();
 		return FALSE;
 	}
+	std::shared_ptr<IObject> obj = objFactory("obj_plate");
+	Attr attr;
+	attr["x"] = "1";
+	attr["y"] = "0";
+	attr["z"] = "0";
+	attr["isDraw"] = "true";
+	obj->addInf("point", "", attr);
+	attr["x"] = "0.5";
+	attr["z"] = "0.866";
+	obj->addInf("point", "", attr);
+	attr["x"] = "-0.5";
+	obj->addInf("point", "", attr);
+	attr["x"] = "-1";
+	attr["z"] = "0";
+	obj->addInf("point", "", attr);
+	attr["x"] = "-0.5";
+	attr["z"] = "-0.866";
+	obj->addInf("point", "", attr);
+	attr["x"] = "0.5";
+	obj->addInf("point", "", attr);
+	attr.clear();
+	attr["r"] = "128";
+	attr["g"] = "128";
+	attr["b"] = "128";
+	obj->addInf("frameColor", "", attr);
+	obj->addInf("plateColor", "", attr);
+	attr.clear();
+	attr["x"] = "0";
+	attr["y"] = "-1";
+	attr["z"] = "0";
+	obj->addInf("head", "", attr);
+	//std::shared_ptr<IObject> obj = objFactory("obj_axis");
+	objs.push_back(obj);
 	graphic::init();
-	SetTimer(g_hwnd, TIMER_ID, 33, NULL);   //timer‚ÌƒZƒbƒg
+	SetTimer(g_hwnd, TIMER_ID, 33, NULL);   //timerï¿½ÌƒZï¿½bï¿½g
 	mouse::create();
 	keyboard::create();
-	ShowWindow(g_hwnd, nCmdShow);  // ƒEƒBƒ“ƒhƒE‚Ì•\¦ó‘Ô‚ğİ’è
-	UpdateWindow(g_hwnd);          // ƒEƒBƒ“ƒhƒE‚ğXV
+	ShowWindow(g_hwnd, nCmdShow);  // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ì•\ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½İ’ï¿½
+	UpdateWindow(g_hwnd);          // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½Xï¿½V
 	while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0) {
 		if (bRet == -1)break;
 		else {
@@ -48,9 +77,8 @@ int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, in
 
 BOOL init(HINSTANCE hCurInst, int nCmdShow) {
 	if (!InitApp(hCurInst))return FALSE;
-	if (!InitInstance(hCurInst, nCmdShow))return FALSE;   //ƒEƒBƒ“ƒhƒEŠÖ˜A‚Ì‰Šú‰»
-														  //d2d_d2dinit(g_hwnd);   //direct2d‰Šú‰»
-
+	if (!InitInstance(hCurInst, nCmdShow))return FALSE;   //ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Ö˜Aï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+														  //d2d_d2dinit(g_hwnd);   //direct2dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	return true;
 }
 
@@ -132,25 +160,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 ATOM InitApp(HINSTANCE hInst) {
 	WNDCLASSEX wc;
-	wc.cbSize = sizeof(WNDCLASSEX);           // \‘¢‘Ì‚ÌƒTƒCƒY
-	wc.style = CS_HREDRAW | CS_VREDRAW;       // ƒNƒ‰ƒX‚ÌƒXƒ^ƒCƒ‹
-	wc.lpfnWndProc = WndProc;                 // ƒvƒƒV[ƒWƒƒ–¼
-	wc.cbClsExtra = 0;                        // •â•ƒƒ‚ƒŠ
-	wc.cbWndExtra = 0;                        // •â•ƒƒ‚ƒŠ
-	wc.hInstance = hInst;                     // ƒCƒ“ƒXƒ^ƒ“ƒX
-	wc.hIcon = (HICON)LoadImage(              // ƒAƒCƒRƒ“
+	wc.cbSize = sizeof(WNDCLASSEX);           // ï¿½\ï¿½ï¿½ï¿½Ì‚ÌƒTï¿½Cï¿½Y
+	wc.style = CS_HREDRAW | CS_VREDRAW;       // ï¿½Nï¿½ï¿½ï¿½Xï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½
+	wc.lpfnWndProc = WndProc;                 // ï¿½vï¿½ï¿½ï¿½Vï¿½[ï¿½Wï¿½ï¿½ï¿½ï¿½
+	wc.cbClsExtra = 0;                        // ï¿½â•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	wc.cbWndExtra = 0;                        // ï¿½â•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	wc.hInstance = hInst;                     // ï¿½Cï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½X
+	wc.hIcon = (HICON)LoadImage(              // ï¿½Aï¿½Cï¿½Rï¿½ï¿½
 		NULL, MAKEINTRESOURCE(IDI_APPLICATION),
 		IMAGE_ICON, 0, 0,
 		LR_DEFAULTSIZE | LR_SHARED);
-	wc.hCursor = (HCURSOR)LoadImage(          // ƒJ[ƒ\ƒ‹
+	wc.hCursor = (HCURSOR)LoadImage(          // ï¿½Jï¿½[ï¿½\ï¿½ï¿½
 		NULL, MAKEINTRESOURCE(IDC_ARROW),
 		IMAGE_CURSOR, 0, 0,
 		LR_DEFAULTSIZE | LR_SHARED);
-	wc.hbrBackground =                        // ”wŒiƒuƒ‰ƒV
+	wc.hbrBackground =                        // ï¿½wï¿½iï¿½uï¿½ï¿½ï¿½V
 		(HBRUSH)GetStockObject(WHITE_BRUSH);
-	wc.lpszMenuName = NULL;                   // ƒƒjƒ…[–¼
-	wc.lpszClassName = "classname";           // ƒNƒ‰ƒX–¼
-	wc.hIconSm = (HICON)LoadImage(            // ¬‚³‚¢ƒAƒCƒRƒ“
+	wc.lpszMenuName = NULL;                   // ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½ï¿½
+	wc.lpszClassName = (LPCSTR)"classname";           // ï¿½Nï¿½ï¿½ï¿½Xï¿½ï¿½
+	wc.hIconSm = (HICON)LoadImage(            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Cï¿½Rï¿½ï¿½
 		NULL, MAKEINTRESOURCE(IDI_APPLICATION),
 		IMAGE_ICON, 0, 0,
 		LR_DEFAULTSIZE | LR_SHARED);
@@ -159,23 +187,23 @@ ATOM InitApp(HINSTANCE hInst) {
 }
 
 BOOL InitInstance(HINSTANCE hInst, int nCmdShow) {
-	//ƒfƒXƒNƒgƒbƒvƒTƒCƒY‚ÌŠm•Û
+	//ï¿½fï¿½Xï¿½Nï¿½gï¿½bï¿½vï¿½Tï¿½Cï¿½Yï¿½ÌŠmï¿½ï¿½
 	HWND dhwnd = GetDesktopWindow();
 	RECT rect;
 	GetClientRect(dhwnd, &rect);
 	HWND hwnd = CreateWindowEx(
-		0,                              // ƒIƒvƒVƒ‡ƒ“‚ÌƒEƒBƒ“ƒhƒE ƒXƒ^ƒCƒ‹
-		"classname",                     // ƒEƒBƒ“ƒhƒE ƒNƒ‰ƒX
-		TEXT("Learn to Program Windows"),    // ƒEƒBƒ“ƒhƒE ƒeƒLƒXƒg
-		WS_OVERLAPPEDWINDOW,            // ƒEƒBƒ“ƒhƒE ƒXƒ^ƒCƒ‹
+		0,                              // ï¿½Iï¿½vï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ÌƒEï¿½Bï¿½ï¿½ï¿½hï¿½E ï¿½Xï¿½^ï¿½Cï¿½ï¿½
+		(LPCSTR)"classname",                     // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E ï¿½Nï¿½ï¿½ï¿½X
+		TEXT("Learn to Program Windows"),    // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E ï¿½eï¿½Lï¿½Xï¿½g
+		WS_OVERLAPPEDWINDOW,            // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E ï¿½Xï¿½^ï¿½Cï¿½ï¿½
 
-										// ƒTƒCƒY‚ÆˆÊ’u
+										// ï¿½Tï¿½Cï¿½Yï¿½ÆˆÊ’u
 		(rect.right - WIDTH) / 2, (rect.bottom - HEIGHT) / 2, WIDTH, HEIGHT,
 
-		NULL,       // eƒEƒBƒ“ƒhƒE    
-		NULL,       // ƒƒjƒ…[
-		hInst,  // ƒCƒ“ƒXƒ^ƒ“ƒX ƒnƒ“ƒhƒ‹
-		NULL        // ’Ç‰Á‚ÌƒAƒvƒŠƒP[ƒVƒ‡ƒ“ ƒf[ƒ^
+		NULL,       // ï¿½eï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½E    
+		NULL,       // ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[
+		hInst,  // ï¿½Cï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½X ï¿½nï¿½ï¿½ï¿½hï¿½ï¿½
+		NULL        // ï¿½Ç‰ï¿½ï¿½ÌƒAï¿½vï¿½ï¿½ï¿½Pï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ ï¿½fï¿½[ï¿½^
 	);
 	if (!hwnd)
 		return FALSE;
@@ -210,7 +238,8 @@ void draw() {
 	graphic::clearMap();
 	d2d::clear();
 
-	for (int i = 0; i < objs.size(); i++)objs[i]->draw();
+	graphic::cmChange();
+	for (size_t i = 0; i < objs.size(); i++)objs[i]->draw();
 
 	graphic::drawMap();
 	d2d::endpaint();

@@ -1,8 +1,8 @@
 #pragma once
 class color {   //色保存用のクラス r,g,b,それだけ。
 public:
-	unsigned char r, g, b;
-	color(unsigned char, unsigned char, unsigned char);
+	int r, g, b;
+	color(int, int, int);
 	color();
 };
 bool operator==(color a, color b);

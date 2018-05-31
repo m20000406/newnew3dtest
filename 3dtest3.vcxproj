@@ -125,7 +125,9 @@
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="obj_axis.cpp" />
+    <ClCompile Include="obj_plate.cpp" />
     <ClCompile Include="vector.cpp" />
+    <ClCompile Include="xml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dgraphic.h" />
@@ -136,7 +138,9 @@
     <ClInclude Include="mouse.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="obj_axis.h" />
+    <ClInclude Include="obj_plate.h" />
     <ClInclude Include="vector.h" />
+    <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="stage.xml" />

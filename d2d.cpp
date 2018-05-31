@@ -18,6 +18,11 @@ namespace d2d {
 	IDWriteTextFormat* g_textformat = NULL;   //directWriteのテキストフォーマット
 }
 
+/// <summary>
+/// d2dの初期化
+/// </summary>
+/// <param name="h"> ウィンドウハンドル</param>
+/// <returns>成功か失敗か</returns>
 bool d2d::d2dinit(HWND h) {
 	if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_factory))) {
 		MessageBox(NULL, TEXT("レンダーファクトリの取得に失敗"), TEXT("ERROR"), MB_OK);
@@ -63,45 +68,71 @@ bool d2d::d2dinit(HWND h) {
 	return true;
 }
 
+/// <summary>
+/// サイズ変更時の関数
+/// </summary>
 void d2d::rect() {
 	if (!isLoaded)return;
 	RECT rect;
 	GetClientRect(hwnd, &rect);
 	g_target->Resize(D2D1::Size(
 		static_cast<UINT>(rect.right - rect.left), static_cast<UINT>(rect.bottom - rect.top)));
-}   //サイズ変更時の関数
+}
 
+/// <summary>
+/// Direct2DのbeginPaintラップ
+/// </summary>
 void d2d::beginpaint() {
 	::BeginPaint(hwnd, &paintstruct);
 	g_target->BeginDraw();
 }
 
+/// <summary>
+/// Direct2DのendPaintのラップ
+/// </summary>
 void d2d::endpaint() {
 	g_target->EndDraw();
 	::EndPaint(hwnd, &paintstruct);
 }
 
+/// <summary>
+/// d2d終了処理
+/// </summary>
 void d2d::finish() {
 	if(solidBrush)solidBrush->Release();
 	if(g_factory)g_factory->Release();
 	if(g_target)g_target->Release();
 }
 
+/// <summary>
+/// solidBrushの色変更用関数
+/// </summary>
+/// <param name="color">色</param>
 void d2d::changeBrushColor(D2D1_COLOR_F color){
-	//solidBrushの色の変更
 	solidBrush->SetColor(color);
 }
 
+/// <summary>
+/// 指定座標に今のブラシで点を打つ
+/// </summary>
+/// <param name="pos">場所</param>
 void d2d::dot(D2D1_POINT_2F pos) {
 	//点を打つ
 	g_target->DrawLine(pos,D2D1::Point2F(pos.x+1,pos.y+1),solidBrush,1);
 }
 
+/// <summary>
+/// デバッグ情報出力
+/// </summary>
+/// <param name="str">文字列</param>
 void d2d::outputDebugInfs(std::wstring str) {
 	g_target->DrawText(str.c_str(), str.length(), g_textformat, D2D1::RectF(0,0,600,900)
 		,stringBlackBrush,D2D1_DRAW_TEXT_OPTIONS_NONE);
 }
 
+/// <summary>
+/// 画面クリア
+/// </summary>
 void d2d::clear() {
 	g_target->Clear(D2D1::ColorF(D2D1::ColorF::White));
 }

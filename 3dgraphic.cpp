@@ -1,8 +1,9 @@
-////////////////////////////////////////
-//3dgraphic.cpp
-//3dƒOƒ‰ƒtƒBƒbƒN‚ÉŠÖ‚·‚é”ŠÖ”
-////////////////////////////////////////
-#pragma warning(disable:4996)
+/**
+ * @brief 3dgraphic.cpp/3dæç”»ã«é–¢ã™ã‚‹cpp
+ * 
+ * @file 3dgraphic.cpp
+ * @date 2018-05-29
+ */
 #include "3dgraphic.h"
 #include "d2d.h"
 #include <math.h>
@@ -16,41 +17,53 @@
 #include <queue>
 
 const float g_near = 1;
-const float g_far = 50;   //‹ßE‰“•½–Ê
-vector g_pos(0, 0, -10);
-vector g_eye(0, 0, 1);
-vector g_right(1, 0, 0);
-vector g_down(0, 1, 0);
-float theta = PI / 4;   //‹–ìŠp
+const float g_far = 50;   //ï¿½ßEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+extern vector g_pos(0, 0, -10);
+extern vector g_eye(0, 0, 1);
+extern vector g_right(1, 0, 0);
+extern vector g_down(0, 1, 0);
+float theta = PI / 4;   //ï¿½ï¿½ï¿½ï¿½p
 extern const int WIDTH;
 extern const int HEIGHT;
-boost::numeric::ublas::matrix<float> M(4, 4);   //convert—ps—ñ
+boost::numeric::ublas::matrix<float> M(4, 4);   //convertï¿½pï¿½sï¿½ï¿½
 
-//1ƒ}ƒX‚Ì•Û‘¶—p
+/**
+ * @brief 1ãƒ”ã‚¯ã‚»ãƒ«ã®æƒ…å ±ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹(æ·±åº¦ã€è‰²ã€æ·±åº¦ã«ä»˜éšã™ã‚‹é€æ˜åº¦)
+ * 
+ */
 class mapPixel {
 public:
-	float k;   //[‚³
-	color col;   //‚»‚Ì“_‚ÌF
-	float alpha;   //“§–¾“x
-	mapPixel(float kk, color c) :k(kk), col(c) {
+	float k;   //ï¿½[ï¿½ï¿½
+	color col;   //ï¿½ï¿½ï¿½Ì“_ï¿½ÌF
+	float alpha;   //ï¿½ï¿½ï¿½ï¿½ï¿½x
+	/// <summary>
+	/// ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^ ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½İ’ï¿½
+	/// </summary>
+	/// <param name="kk">ï¿½[ï¿½x</param>
+	/// <param name="c">ï¿½F</param>
+	mapPixel(float kk, color c) :k(kk), col(c), alpha(0) {
 		alpha = (k - g_near) / (g_near - g_far) + 1;
 	};
 	mapPixel() :k(g_far), col(color(0, 0, 0)) {};
 };
 
-typedef std::pair<float, float> descarts;
-
-//std::map<descarts, mapPixel> map;
+/**
+ * @brief ç”»é¢å…¨ä½“ã®ãƒ”ã‚¯ã‚»ãƒ«æƒ…å ±ã‚’ä¿å­˜ã™ã‚‹äºŒæ¬¡å…ƒé…åˆ—
+ * 
+ */
 mapPixel map[600][900];
 
-//ƒ}ƒbƒv‰Šú‰»
+/**
+ * @brief ç”»é¢æç”»é…åˆ—ã®ã‚¯ãƒªã‚¢
+ * 
+ */
 void graphic::clearMap() {
 	for (int x = 0; x < WIDTH; x++)
 		for (int y = 0; y < HEIGHT; y++)
 			map[x][y] = mapPixel();
 }
 
-//“_‚ÌˆÊ’uv
+//ï¿½_ï¿½ÌˆÊ’uv
 vector graphic::convert(vector v) {
 	typedef boost::numeric::ublas::vector<float> fvector;
 	fvector V(4);
@@ -60,64 +73,76 @@ vector graphic::convert(vector v) {
 	return vec;
 }
 
+  /**
+   * ## enqueue
+   * å…ˆé ­ã«åŠ ãˆã‚‹
+   * @param o åŠ ãˆã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+   */
 bool graphic::isinScreen(vector v) {
-	if (v.z < g_near || v.z > g_far)return false;   //zÀ•W‚ª‚¨‚©‚µ‚¢
-	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT)return false;   //x,yÀ•W‚ª‚¨‚©‚µ‚¢
+	if (v.z < g_near || v.z > g_far)return false;   //zï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	if (v.x < 0 || v.x > WIDTH || v.y < 0 || v.y > HEIGHT)return false;   //x,yï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	return true;
 }
 
+/**
+ * ## graphic::turnRight
+ * æŒ‡å®šåº¦æ•°ã ã‘å³ã«å›è»¢
+ * @param t åº¦æ•°
+ */
 void graphic::turnRight(float t) {
 	vector old = g_eye;
 	g_eye = old*cos(t) + g_right*sin(t);
 	g_right = -1 * old*sin(t) + g_right*cos(t);
 }
 
+/**
+ * ## turnDown
+ * å³ã‚’å‘ã
+ * @param t 
+ */
 void graphic::turnDown(float t) {
 	vector old = g_eye;
 	g_eye = old*cos(t) + g_down*sin(t);
 	g_down = -1 * old*sin(t) + g_down*cos(t);
 }
 
-void graphic::draw() {
-	cmChange();
-	d2d::beginpaint();
-	static int r = 5;
-	clearMap();
-	d2d::clear();
-	for (int x = -10 * r; x <= 10 * r; x += r)drawLine(vector(x, -10 * r, 0), vector(x, 10 * r, 0), color(255, 0, 0));
-	for (int y = -10 * r; y <= 10 * r; y += r)drawLine(vector(-10 * r, y, 0), vector(10 * r, y, 0), color(0, 255, 0));
-	//drawLine(vector(0, 0, 0), vector(r,0,0),color(255,0,0));
-	//drawLine(vector(0,0,0),vector(0,r,0),color(0,255,0));
-	//drawLine(vector(0,0,0),vector(0,0,r),color(0,0,255));
-	drawMap();
-	d2d::endpaint();
-}
-
+/**
+ * @brief 
+ * 
+ * @param v 
+ */
 void graphic::moveCamera(vector v) {
 	g_pos = g_pos + v;
 }
 
+/// <summary>
+/// graphic::ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+/// </summary>
 void graphic::init() {
-	//map.clear();
 	for (int x = 0; x < WIDTH; x++)
 		for (int y = 0; y < HEIGHT; y++)
 			map[x][y] = mapPixel();
 }
 
+/// <summary>
+/// ï¿½ï¿½Êï¿½Ìˆï¿½_ï¿½É‚ï¿½ï¿½ï¿½Fï¿½ï¿½`ï¿½ï¿½
+/// </summary>
+/// <param name="v">ï¿½ï¿½Êï¿½ÌêŠ</param>
+/// <param name="c">ï¿½F</param>
 void graphic::dotMap(vector v, color c) {
 	v = vector((int)round(v.x), (int)round(v.y), v.z);
-	if (v.x < 0 || v.x >= WIDTH || v.y < 0 || v.y >= HEIGHT || v.z < (float)g_near || v.z >(float)g_far)return;   //‰æ–ÊŠO
+	if (v.x < 0 || v.x >= WIDTH || v.y < 0 || v.y >= HEIGHT || v.z < (float)g_near || v.z >(float)g_far)return;   //ï¿½ï¿½ÊŠO
 	if (map[(int)round(v.x)][(int)round(v.y)].k > v.z)map[(int)round(v.x)][(int)round(v.y)] = mapPixel(v.z, c);
 
 }
 
-//x < 0 -> 1
-//x > WIDTH -> 2
-//z > g_far -> 4
-//0 < z < g_near -> 8
-//y < 0 -> 16
-//y > HEIGHT -> 32
-//z < 0 -> 64
+/// x < 0 -> 1
+/// x > WIDTH -> 2
+/// z > g_far -> 4
+/// 0 < z < g_near -> 8
+/// y < 0 -> 16
+/// y > HEIGHT -> 32
+/// z < 0 -> 64
 int graphic::whereis(vector v) {
 	int temp = 0;
 	if (v.z < g_near)return 64;
@@ -129,8 +154,14 @@ int graphic::whereis(vector v) {
 	return temp;
 }
 
-void graphic::drawLine(vector v1, vector v2, color c) {   //v1‚ğn“_Av2‚ğI“_AF‚ğc‚Æ‚µ‚Äü‚ğˆø‚­
-	/*‘ælˆÄ:z>g_near‚Æz<g_near‚Å•ª‚¯‚é*/
+/// <summary>
+/// ï¿½ï¿½_ï¿½ï¿½nï¿½_ï¿½Aï¿½Iï¿½_ï¿½É‚ï¿½ï¿½Ä’ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½
+/// </summary>
+/// <param name="v1">ï¿½nï¿½_</param>
+/// <param name="v2">ï¿½Iï¿½_</param>
+/// <param name="c">ï¿½F</param>
+void graphic::drawLine(vector v1, vector v2, color c) {
+	/*ï¿½ï¿½lï¿½ï¿½:z>g_nearï¿½ï¿½z<g_nearï¿½Å•ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	std::queue<std::pair<vector, vector>> q;
 	q.push(std::make_pair(v1, v2));
 	while (q.size() != 0) {
@@ -138,7 +169,7 @@ void graphic::drawLine(vector v1, vector v2, color c) {   //v1‚ğn“_Av2‚ğI“_A
 		q.pop();
 		vector _v1 = graphic::convert(p.first), _v2 = graphic::convert(p.second);
 		int w1 = whereis(_v1), w2 = whereis(_v2);
-		if (w1 == 0 && w2 == 0) {   //‚Ü‚Æ‚à‚É•`‰æ‚·‚éê‡
+		if (w1 == 0 && w2 == 0) {   //ï¿½Ü‚Æ‚ï¿½É•`ï¿½æ‚·ï¿½ï¿½ê‡
 			_v1 = vector(round(_v1.x), round(_v1.y), round(_v1.z)),
 				_v2 = vector(round(_v2.x), round(_v2.y), round(_v2.z));
 			if (_v1.x == _v2.x && _v1.y == _v2.y) {
@@ -219,15 +250,16 @@ void graphic::drawLine(vector v1, vector v2, color c) {   //v1‚ğn“_Av2‚ğI“_A
 			}
 			continue;
 		}
-		if ((_v1 - _v2).norm() < 1)continue;//•‚P–¢–
-		else if ((w1 & w2) != 0)continue;   //‹¤’Ê‚Ì”ÍˆÍ(•`‰æ”ÍˆÍŠO)‚Å‚ ‚Á‚½‚çÁ‹‚¾‚¯‚µ‚Ä‹A‚é
-		else if (w1 != 0 || w2 != 0) {   //‚Ç‚¿‚ç‚à•`‰æ”ÍˆÍ“à‚Æ‚¢‚¤‚í‚¯‚Å‚Í‚È‚¢‚È‚ç’†“_•ªŠ„
+		if ((_v1 - _v2).norm() < 1)continue;//ï¿½ï¿½ï¿½Pï¿½ï¿½ï¿½ï¿½
+		else if ((w1 & w2) != 0)continue;   //ï¿½ï¿½ï¿½Ê‚Ì”Íˆï¿½(ï¿½`ï¿½ï¿½ÍˆÍŠO)ï¿½Å‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‹Aï¿½ï¿½
+		else if (w1 != 0 || w2 != 0) {   //ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½ÍˆÍ“ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½í‚¯ï¿½Å‚Í‚È‚ï¿½ï¿½È‚ç’†ï¿½_ï¿½ï¿½ï¿½ï¿½
 			q.push(std::pair<vector, vector>(p.first, (p.first + p.second) / 2));
 			q.push(std::pair<vector, vector>((p.first + p.second) / 2, p.second));
 			continue;
 		}
 	}
 }
+
 
 void graphic::goLeft(float d) {
 	g_pos = g_pos - d*g_right;
@@ -253,37 +285,33 @@ void graphic::goForward(float d) {
 	g_pos = g_pos + d*g_eye;
 }
 
-void graphic::drawMap() {   //map‚ÌÀÛ‚Ì•`‰æ
-	//for (auto e : map) {
-	//	d2d::changeBrushColor(D2D1::ColorF(e.second.col.r,e.second.col.g,e.second.col.b,e.second.alpha));
-	//	d2d::dot(D2D1::Point2F(e.first.first,e.first.second));
-	//}
+void graphic::drawMap() {   //mapï¿½Ìï¿½ï¿½Û‚Ì•`ï¿½ï¿½
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
 			if (map[x][y].k != g_far) {
-				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r, map[x][y].col.g, map[x][y].col.b, map[x][y].alpha));
+				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r/255, map[x][y].col.g/255, map[x][y].col.b/255, map[x][y].alpha));
 				d2d::dot(D2D1::Point2F(x, y));
 			}
 		}
 	}
 }
 
-//convert—ps—ñ‚ÌXV—pŠÖ”
+//convertï¿½pï¿½sï¿½ï¿½ÌXï¿½Vï¿½pï¿½Öï¿½
 void graphic::cmChange() {
 	typedef boost::numeric::ublas::matrix<float> fmatrix;
-	//ƒ[ƒ‹ƒh¨•½sˆÚ“®
+	//ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½sï¿½Ú“ï¿½
 	fmatrix M0(4, 4);
 	M0(0, 0) = 1, M0(0, 1) = 0, M0(0, 2) = 0, M0(0, 3) = -g_pos.x;
 	M0(1, 0) = 0, M0(1, 1) = 1, M0(1, 2) = 0, M0(1, 3) = -g_pos.y;
 	M0(2, 0) = 0, M0(2, 1) = 0, M0(2, 2) = 1, M0(2, 3) = -g_pos.z;
 	M0(3, 0) = 0, M0(3, 1) = 0, M0(3, 2) = 0, M0(3, 3) = 1;
-	//•½sˆÚ“®¨‹ü
+	//ï¿½ï¿½ï¿½sï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	fmatrix M1(4, 4);
 	M1(0, 0) = g_right.x, M1(0, 1) = g_right.y, M1(0, 2) = g_right.z, M1(0, 3) = 0;
 	M1(1, 0) = g_down.x, M1(1, 1) = g_down.y, M1(1, 2) = g_down.z, M1(1, 3) = 0;
 	M1(2, 0) = g_eye.x, M1(2, 1) = g_eye.y, M1(2, 2) = g_eye.z, M1(2, 3) = 0;
 	M1(3, 0) = 0, M1(3, 1) = 0, M1(3, 2) = 0, M1(3, 3) = 1;
-	//‹ü¨‰æ–Ê
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	fmatrix M2(4, 4);
 	M2(0, 0) = g_near*min(WIDTH, HEIGHT) / 2 / tan(theta), M2(0, 1) = 0, M2(0, 2) = WIDTH / 2, M2(0, 3) = 0;
 	M2(1, 0) = 0, M2(1, 1) = g_near*min(WIDTH, HEIGHT) / 2 / tan(theta), M2(1, 2) = HEIGHT / 2, M2(1, 3) = 0;
