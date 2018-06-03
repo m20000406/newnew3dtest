@@ -46,9 +46,9 @@ int WINAPI WinMain(HINSTANCE hCurInst, HINSTANCE hPrevInst, LPSTR lspCmdLine, in
 	attr["x"] = "0.5";
 	obj->addInf("point", "", attr);
 	attr.clear();
-	attr["r"] = "128";
-	attr["g"] = "128";
-	attr["b"] = "128";
+	attr["r"] = "145";
+	attr["g"] = "131";
+	attr["b"] = "178";
 	obj->addInf("frameColor", "", attr);
 	obj->addInf("plateColor", "", attr);
 	attr.clear();

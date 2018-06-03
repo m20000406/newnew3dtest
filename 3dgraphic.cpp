@@ -170,8 +170,7 @@ void graphic::drawLine(vector v1, vector v2, color c) {
 		vector _v1 = graphic::convert(p.first), _v2 = graphic::convert(p.second);
 		int w1 = whereis(_v1), w2 = whereis(_v2);
 		if (w1 == 0 && w2 == 0) {   //�܂Ƃ�ɕ`�悷��ꍇ
-			_v1 = vector(round(_v1.x), round(_v1.y), round(_v1.z)),
-				_v2 = vector(round(_v2.x), round(_v2.y), round(_v2.z));
+			_v1 = round(_v1),_v2 = round(_v2);
 			if (_v1.x == _v2.x && _v1.y == _v2.y) {
 				if (_v1.z < _v2.z)dotMap(vector(_v1.x, _v1.y, _v1.z), c);
 				else dotMap(vector(_v1.x, _v1.y, _v2.z), c);
@@ -289,7 +288,8 @@ void graphic::drawMap() {   //map�̎��ۂ̕`��
 	for (int x = 0; x < WIDTH; x++) {
 		for (int y = 0; y < HEIGHT; y++) {
 			if (map[x][y].k != g_far) {
-				d2d::changeBrushColor(D2D1::ColorF(map[x][y].col.r/255, map[x][y].col.g/255, map[x][y].col.b/255, map[x][y].alpha));
+				D2D1_COLOR_F f = D2D1::ColorF((float)map[x][y].col.r / 255, (float)map[x][y].col.g / 255, (float)map[x][y].col.b / 255, map[x][y].alpha);
+				d2d::changeBrushColor(f);
 				d2d::dot(D2D1::Point2F(x, y));
 			}
 		}

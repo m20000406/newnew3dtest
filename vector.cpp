@@ -66,3 +66,7 @@ vector vector::operator/=(float a) {
 float vector::operator*=(vector a) {
 	return this->x*a.x + this->y*a.y + this->z*a.z;
 }
+
+vector round(vector v) {
+	return vector(round(v.x),round(v.y),v.z);
+}

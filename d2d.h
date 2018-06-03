@@ -27,4 +27,4 @@ namespace d2d {
 //const int WIDTH = 600;
 //const int HEIGHT = 900;
 const float PI = 3.141592f;
-const float g_vdeg = PI / 240;
+const float g_vdeg = PI / 60;
